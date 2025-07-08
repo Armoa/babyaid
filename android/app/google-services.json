@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1031927211632",
+    "project_id": "helfer-b1d14",
+    "storage_bucket": "helfer-b1d14.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1031927211632:android:204cc252c1db537ba4f6b5",
+        "android_client_info": {
+          "package_name": "com.helfer.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD415NXUn7-0bDvEXw-NGv2OemsU7js6M8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
