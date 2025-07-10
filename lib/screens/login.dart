@@ -30,8 +30,10 @@ class LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: AppColors.blueDark),
           onPressed: () {
             exit(0);
           },
@@ -39,7 +41,7 @@ class LoginScreenState extends State<LoginScreen> {
       ),
       body: SingleChildScrollView(
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.88,
+          height: MediaQuery.of(context).size.height * 0.94,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: Column(
@@ -53,7 +55,7 @@ class LoginScreenState extends State<LoginScreen> {
                   "Iniciar Sessión",
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 40.0),
+                const SizedBox(height: 30.0),
                 TextFormField(
                   controller: usernameController,
                   decoration: InputDecoration(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:helfer/model/colors.dart';
+import 'package:helfer/model/solicitud_servicio_model.dart';
 import 'package:helfer/model/usuario_model.dart';
+import 'package:helfer/screens/elige_tu_helfer.dart';
 import 'package:intl/intl.dart';
 
 class FrecuenciaServicio extends StatefulWidget {
@@ -99,7 +101,7 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
                           SizedBox(width: 40),
                           Text(
                             widget.ubicacion.callePrincipal,
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(fontSize: 17),
                           ),
                         ],
                       ),
@@ -124,15 +126,23 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
             ),
 
             Container(
-              color: AppColors.grayLight,
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: AppColors.blueLight, // Color de la línea
+                    width: 1.0, // Grosor de la línea
+                  ),
+                ),
+              ),
+
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => {},
+                        onPressed: () => {Navigator.pop(context)},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.graySoft,
                         ),
@@ -142,10 +152,40 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 10),
+                    SizedBox(width: 20),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => {},
+                        onPressed: () {
+                          if (!politicaAceptada) {
+                            _mostrarSnackPolitica(); // función que te dejo abajo 👇
+                            return;
+                          }
+
+                          if (fechaSeleccionada == null) {
+                            _mostrarSnackFecha(); // opcional: aviso si no se eligió fecha
+                            return;
+                          }
+
+                          final solicitud = SolicitudServicioModel(
+                            frecuencia: frecuencia,
+                            duracionHoras: duracionHoras,
+                            rangoHorario: rangoHoras,
+                            fecha: fechaSeleccionada!,
+                            ubicacion:
+                                widget
+                                    .ubicacion, // vuelve desde la pantalla anterior
+                          );
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) =>
+                                      ElegirHerfer(solicitud: solicitud),
+                            ),
+                          );
+                        },
+
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.blueSky,
                         ),
@@ -159,11 +199,34 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
                 ),
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 50),
           ],
         ),
       ),
     );
+  }
+
+  // Snckbars de validacion enviar boton
+  void _mostrarSnackPolitica() {
+    final snackBar = SnackBar(
+      content: const Text(
+        'Debes aceptar la Política de Cancelación para continuar.',
+      ),
+      duration: const Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.redAccent,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void _mostrarSnackFecha() {
+    final snackBar = SnackBar(
+      content: const Text('Seleccioná una fecha antes de avanzar.'),
+      duration: const Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.orangeAccent,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   // Selector de frecuencia
@@ -269,8 +332,8 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
           "Duración del Servicio",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        Slider(
-          value: duracionHoras.toDouble(),
+        _sliderConEstilo(
+          valor: duracionHoras.toDouble(),
           min: 4,
           max: 9,
           divisions: 2,
@@ -281,7 +344,7 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
     );
   }
 
-  // Rago de Horario
+  // Segundo Slider de Rago de Horario
   Widget _rangeHorarioServicio() {
     final minHora = 8.0;
     final maxHora = 18.0;
@@ -300,41 +363,54 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
 
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
-          child: RangeSlider(
-            values: rangoHoras,
-            min: rangoMin,
-            max: rangoMax,
-            divisions: (rangoMax - rangoMin).toInt(),
-            labels: RangeLabels(
-              "${rangoHoras.start.round()}:00",
-              "${rangoHoras.end.round()}:00",
+          child: SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              thumbColor: AppColors.blueDark,
+              activeTrackColor: AppColors.blueDark,
+              inactiveTrackColor: Colors.grey[300],
+              overlayColor: const Color.fromARGB(181, 7, 200, 248),
+              trackHeight: 10,
+              rangeThumbShape: const RoundRangeSliderThumbShape(
+                enabledThumbRadius: 12, // tamaño de los pulgares
+              ),
+              rangeTrackShape:
+                  const RoundedRectRangeSliderTrackShape(), // estilo de barra
             ),
-            onChanged: (values) {
-              setState(
-                () =>
-                    rangoHoras = RangeValues(
-                      values.start.roundToDouble(),
-                      values.end.roundToDouble(),
-                    ),
-              );
-            },
-            onChangeEnd: (values) {
-              final diferencia = values.end - values.start;
-
-              if (diferencia < duracionMinima) {
-                _mostrarSnackHorarioInvalido();
-                // Opcional: restaurar rango anterior válido
+            child: RangeSlider(
+              values: rangoHoras,
+              min: rangoMin,
+              max: rangoMax,
+              divisions: (rangoMax - rangoMin).toInt(),
+              labels: RangeLabels(
+                "${rangoHoras.start.round()}:00",
+                "${rangoHoras.end.round()}:00",
+              ),
+              onChanged: (values) {
                 setState(
                   () =>
                       rangoHoras = RangeValues(
-                        values.start,
-                        values.start + duracionMinima > maxHora
-                            ? maxHora
-                            : values.start + duracionMinima,
+                        values.start.roundToDouble(),
+                        values.end.roundToDouble(),
                       ),
                 );
-              }
-            },
+              },
+              onChangeEnd: (values) {
+                final diferencia = values.end - values.start;
+
+                if (diferencia < duracionMinima) {
+                  _mostrarSnackHorarioInvalido();
+                  setState(
+                    () =>
+                        rangoHoras = RangeValues(
+                          values.start,
+                          values.start + duracionMinima > maxHora
+                              ? maxHora
+                              : values.start + duracionMinima,
+                        ),
+                  );
+                }
+              },
+            ),
           ),
         ),
 
@@ -430,9 +506,6 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
                           HapticFeedback.selectionClick();
                           setState(() => fechaSeleccionada = fecha);
                         },
-
-                // ? null
-                // : () => setState(() => fechaSeleccionada = fecha),
                 child: Container(
                   width: 60,
 
@@ -479,6 +552,7 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
     );
   }
 
+  // Snack día Invoalidos
   void _mostrarSnackDiaInvalido(String dia) {
     final snackBar = SnackBar(
       content: Text('No se puede seleccionar $dia. Elige un día hábil.'),
@@ -487,5 +561,45 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
       backgroundColor: Colors.redAccent,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  // Personalizacion Slider
+  Widget _sliderConEstilo({
+    required double valor,
+    required double min,
+    required double max,
+    required ValueChanged<double> onChanged,
+    required String label,
+    required int divisions,
+  }) {
+    return SliderTheme(
+      data: SliderTheme.of(context).copyWith(
+        thumbColor: AppColors.blueDark,
+        // color interno del círculo
+        activeTrackColor: AppColors.blueDark, // color barra seleccionada
+        inactiveTrackColor: Colors.grey[300], // barra no seleccionada
+        overlayColor: const Color.fromARGB(
+          181,
+          7,
+          200,
+          248,
+        ), // borde translúcido
+        thumbShape: const RoundSliderThumbShape(
+          enabledThumbRadius: 12, // tamaño del círculo
+        ),
+        overlayShape: const RoundSliderOverlayShape(
+          overlayRadius: 20, // tamaño del círculo exterior translúcido
+        ),
+        trackHeight: 10, // grosor de la barra del slider
+      ),
+      child: Slider(
+        value: valor,
+        min: min,
+        max: max,
+        divisions: 2,
+        label: label,
+        onChanged: onChanged,
+      ),
+    );
   }
 }
