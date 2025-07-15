@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 Future<List<Order>> fetchOrders(int userId) async {
   final url = Uri.parse(
-    "https://helfer.flatzi.com/app/get_orders.php?user_id=$userId",
+    "https://helfer.flatzi.com/app/get_reservas.php?user_id=$userId",
   );
   final response = await http.get(url);
 

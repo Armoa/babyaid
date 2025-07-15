@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:helfer/model/colors.dart';
 
 ThemeData lightTheme = ThemeData(
-  scaffoldBackgroundColor: Colors.white,
+  scaffoldBackgroundColor: AppColors.blueDark,
   brightness: Brightness.light,
   appBarTheme: AppBarTheme(
     elevation: 0.0,
-    backgroundColor: Colors.transparent,
+    backgroundColor: AppColors.blueDark,
     surfaceTintColor: Colors.transparent,
     toolbarHeight: 80,
     centerTitle: true,

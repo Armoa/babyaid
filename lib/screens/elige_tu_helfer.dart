@@ -52,61 +52,45 @@ class _ElegirHerferState extends State<ElegirHerfer> {
     }
   }
 
-  // Future<List<PersonalModel>> obtenerPersonalesDisponibles(
-  //   DateTime fecha,
-  // ) async {
-  //   final fechaStr = DateFormat('yyyy-MM-dd').format(fecha);
-  //   final url = Uri.parse(
-  //     'https://helfer.flatzi.com/app/listar_personal_disponible.php?fecha=$fechaStr',
-  //   );
-  //   final res = await http.get(url);
-
-  //   if (res.statusCode == 200) {
-  //     final data = json.decode(res.body);
-  //     final lista = data['disponibles'] as List;
-  //     return lista.map((e) => PersonalModel.fromJson(e)).toList();
-  //   } else {
-  //     throw Exception('Error al obtener personal disponible');
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.blueDark,
       appBar: AppBar(
-        leading: Column(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
+        automaticallyImplyLeading: false,
+        leading: null,
+        toolbarHeight: 120,
         title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.arrow_back),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: Image.asset('assets/logo-blanco.png', scale: 2.5),
+                ),
+              ],
+            ),
+            SizedBox(height: 25),
             Text(
-              "Eligí a tu Helfer",
+              "¿Elegí a tu Helfer",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+            SizedBox(height: 25),
           ],
         ),
-        actions: [
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 20, 0),
-                child: Image.asset('assets/logo-blanco.png', scale: 4),
-              ),
-            ],
-          ),
-        ],
 
         backgroundColor: AppColors.blueDark,
-        toolbarHeight: 120,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -143,9 +127,6 @@ class _ElegirHerferState extends State<ElegirHerfer> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text("Error: ${snapshot.error}"));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      print(
-                        "Snapshot contiene: ${snapshot.data!.length} elementos",
-                      );
                       return const Center(
                         child: Text(
                           "No hay personal disponible para esta fecha",
@@ -153,6 +134,11 @@ class _ElegirHerferState extends State<ElegirHerfer> {
                       );
                     } else {
                       final lista = snapshot.data!;
+
+                      for (final personal in lista) {
+                        precacheImage(NetworkImage(personal.foto), context);
+                      }
+
                       return _listaPersonalDisponible(lista);
                     }
                   },
@@ -201,8 +187,15 @@ class _ElegirHerferState extends State<ElegirHerfer> {
             },
 
             leading: CircleAvatar(
-              backgroundImage: NetworkImage(personal.foto),
               radius: 28,
+              backgroundImage: NetworkImage(personal.foto),
+              child: ClipOval(
+                child: FadeInImage.assetNetwork(
+                  placeholder: 'assets/placeholder.jpg',
+                  image: personal.foto,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
             title: Text(
               "${personal.nombre} ${personal.apellido} ",

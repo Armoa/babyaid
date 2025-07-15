@@ -100,7 +100,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
       );
 
       final Map<String, dynamic> orderData = {
-        'user_id': authProvider.userId, // Antes era 'customer_id'
+        'user_id': authProvider.userId,
         'payment_method': paymentProvider.selectedMethod,
         'total': calcularPrecioServicio(widget.solicitud.duracionHoras),
         'razonsocial': razonSocialController.text,
@@ -115,56 +115,58 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
             '${widget.solicitud.rangoHorario.start.round()}:00 a ${widget.solicitud.rangoHorario.end.round()}:00',
       };
 
-      print(jsonEncode('ORDERDATA: $orderData'));
-
       final response = await http.post(
         Uri.parse("https://helfer.flatzi.com/app/insert_order.php"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(orderData),
       );
+
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
 
         if (responseData['status'] == 'success') {
-          // Vaciar el carrito
-
-          ScaffoldMessenger.of(context).showSnackBar(
+          ScaffoldMessenger.of(globalContext).showSnackBar(
             const SnackBar(content: Text("Pedido enviado exitosamente")),
           );
+
+          Future.delayed(const Duration(seconds: 2), () {
+            Future.delayed(const Duration(seconds: 2), () {
+              Navigator.of(globalContext).pushAndRemoveUntil(
+                PageRouteBuilder(
+                  transitionDuration: const Duration(milliseconds: 600),
+                  pageBuilder: (_, __, ___) => const MyHomePage(),
+                  transitionsBuilder: (_, animation, __, child) {
+                    final curved = CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeInOut,
+                    );
+
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(1.0, 0.0), // 👉 desde la derecha
+                        end: Offset.zero,
+                      ).animate(curved),
+                      child: child,
+                    );
+                  },
+                ),
+                (route) => false,
+              );
+            });
+          });
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
+          ScaffoldMessenger.of(globalContext).showSnackBar(
             SnackBar(
               content: Text("Error del servidor: ${responseData['message']}"),
             ),
           );
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(globalContext).showSnackBar(
           SnackBar(
             content: Text(
               "Error al enviar el pedido: Código ${response.statusCode}",
             ),
-          ),
-        );
-      }
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(globalContext).showSnackBar(
-          const SnackBar(content: Text("Pedido enviado exitosamente")),
-        );
-
-        // Redirigir después de 2 segundos
-        Future.delayed(const Duration(seconds: 2), () {
-          Navigator.pushAndRemoveUntil(
-            globalContext,
-            MaterialPageRoute(builder: (context) => const MyHomePage()),
-            (route) => false,
-          );
-        });
-      } else {
-        ScaffoldMessenger.of(globalContext).showSnackBar(
-          SnackBar(
-            content: Text("Error al enviar el pedido: ${response.body}"),
           ),
         );
       }
@@ -187,38 +189,40 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
     return Scaffold(
       backgroundColor: AppColors.blueDark,
       appBar: AppBar(
-        leading: Column(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
+        automaticallyImplyLeading: false,
+        leading: null,
+        toolbarHeight: 120,
         title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.arrow_back),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: Image.asset('assets/logo-blanco.png', scale: 2.5),
+                ),
+              ],
+            ),
+            SizedBox(height: 25),
             Text(
-              "Pago y Facturacion",
+              "Finalizar pedido",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+            SizedBox(height: 25),
           ],
         ),
-        actions: [
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 20, 0),
-                child: Image.asset('assets/logo-blanco.png', scale: 4),
-              ),
-            ],
-          ),
-        ],
 
         backgroundColor: AppColors.blueDark,
-        toolbarHeight: 120,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -231,329 +235,325 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                   ? AppColors.blueBlak
                   : Colors.white,
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Card(
-                        elevation: 0,
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(widget.personal.foto),
-                            radius: 28,
-                          ),
-                          title: Text(
-                            "${widget.personal.nombre} ${widget.personal.apellido} ",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.verified,
-                                    size: 16,
-                                    color:
-                                        widget.personal.verificado == 1
-                                            ? Colors.green
-                                            : Colors.grey,
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    widget.personal.verificado == 1
-                                        ? 'Perfil Verificado'
-                                        : 'Perfil sin verificar',
-                                  ),
-                                ],
-                              ),
-
-                              Row(
-                                children: [
-                                  Icon(Icons.home, size: 16),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Servicios: ${widget.personal.antiguedad}',
-                                  ),
-                                ],
-                              ),
-
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.access_time_outlined,
-                                    size: 16,
-                                    color: AppColors.blueDark,
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    '${widget.personal.horaDesde.substring(0, 5)} a ${widget.personal.horaHasta.substring(0, 5)}',
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                                size: 20,
-                              ),
-                              Text(
-                                widget.personal.calificacion.toStringAsFixed(1),
-                              ),
-                            ],
-                          ),
-                        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 2),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Card(
+                      elevation: 0,
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
                       ),
-
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(20, 20, 10, 10),
-                        child: Column(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(widget.personal.foto),
+                          radius: 28,
+                        ),
+                        title: Text(
+                          "${widget.personal.nombre} ${widget.personal.apellido} ",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Column(
                           children: [
-                            Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                "Metodo de Pago",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            // SELECTOR DE METODO DE PAGO
-                            const SelectMetodPay(),
-                            const SizedBox(height: 10),
-                            // Nuevos campos para facturación
-                            Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                "Datos de Facturacion",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            TextFormField(
-                              controller: razonSocialController,
-                              decoration: InputDecoration(
-                                labelText: 'Razón Social',
-                                prefixIcon: const Icon(
-                                  Icons.person_pin_rounded,
-                                ),
-                                border: outlineInputBorder,
-                              ),
-                              validator: (value) {
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                              controller: rucController,
-                              decoration: InputDecoration(
-                                labelText: 'RUC/Cédula',
-                                prefixIcon: const Icon(Icons.info),
-                                border: outlineInputBorder,
-                              ),
-                              validator: (value) {
-                                // Este campo tampoco es obligatorio
-                                return null;
-                              },
-                            ),
-                            SizedBox(height: 20),
-
-                            Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                "Datos adhicionales",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            TextFormField(
-                              controller: datoAdhicionalController,
-                              decoration: InputDecoration(
-                                labelText: 'Tocar timbre, limpiar bien los...',
-                                prefixIcon: const Icon(
-                                  Icons.person_pin_rounded,
-                                ),
-                                border: outlineInputBorder,
-                              ),
-                              validator: (value) {
-                                return null;
-                              },
-                            ),
-
-                            SizedBox(height: 30),
-
-                            Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                "Resumen general",
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 10),
-
-                            Column(
+                            Row(
                               children: [
-                                DatoEnDosColumnas(
-                                  textoIzquierdo: "Horas de servicio:",
-                                  textoDerecho:
-                                      '${widget.solicitud.duracionHoras}',
-                                  colorFondo: AppColors.grayLight,
+                                Icon(
+                                  Icons.verified,
+                                  size: 16,
+                                  color:
+                                      widget.personal.verificado == 1
+                                          ? Colors.green
+                                          : Colors.grey,
                                 ),
-
-                                DatoEnDosColumnas(
-                                  textoIzquierdo: "Frecuencia:",
-                                  textoDerecho: widget.solicitud.frecuencia,
-                                  colorFondo: AppColors.white,
-                                ),
-
-                                DatoEnDosColumnas(
-                                  textoIzquierdo: "Fecha de Inicio:",
-                                  textoDerecho:
-                                      DateFormat('EEEE d MMMM y', 'es_PY')
-                                          .format(widget.solicitud.fecha)
-                                          .toString()
-                                          .capitalizeFirst(),
-                                  colorFondo: AppColors.grayLight,
-                                ),
-
-                                DatoEnDosColumnas(
-                                  textoIzquierdo: "Horarios:",
-                                  textoDerecho:
-                                      '${widget.solicitud.rangoHorario.start.round()}:00 a ${widget.solicitud.rangoHorario.end.round()}:00',
-                                  colorFondo: AppColors.white,
-                                ),
-
-                                DatoEnDosColumnas(
-                                  textoIzquierdo: "Ubicación:",
-                                  textoDerecho:
-                                      widget
-                                          .solicitud
-                                          .ubicacion
-                                          .nombreUbicacion,
-                                  colorFondo: AppColors.grayLight,
-                                ),
-
-                                DatoEnDosColumnas(
-                                  textoIzquierdo: "Costo diario:",
-                                  textoDerecho:
-                                      '₲. ${numberFormat(costoTotal.toStringAsFixed(0))}',
-                                  colorFondo: AppColors.white,
-                                ),
-
-                                Container(
-                                  color: Color.fromARGB(255, 182, 208, 231),
-
-                                  child: DatoEnDosColumnas(
-                                    textoIzquierdo: "Total + IVA:",
-                                    textoDerecho:
-                                        '₲. ${numberFormat(costoTotal.toStringAsFixed(0))}',
-                                    colorFondo: Colors.transparent,
-                                  ),
+                                SizedBox(width: 8),
+                                Text(
+                                  widget.personal.verificado == 1
+                                      ? 'Perfil Verificado'
+                                      : 'Perfil sin verificar',
                                 ),
                               ],
                             ),
 
-                            SizedBox(height: 30),
+                            Row(
+                              children: [
+                                Icon(Icons.home, size: 16),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Servicios: ${widget.personal.antiguedad}',
+                                ),
+                              ],
+                            ),
 
                             Row(
                               children: [
-                                Expanded(
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.blueDark,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12.0,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(24),
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      print('Costo : $costoTotal ');
-                                      // final authProvider =
-                                      //     Provider.of<local_auth.AuthProvider>(
-                                      //       context,
-                                      //       listen: false,
-                                      //     );
-                                      final clienteId =
-                                          Provider.of<AuthProvider>(
-                                            context,
-                                            listen: false,
-                                          ).userId;
-                                      if (clienteId == null) {
-                                        return;
-                                      }
-                                      // VALIDAR METODO DE PAGO
-                                      if (paymentProvider.selectedMethod ==
-                                              "/" ||
-                                          paymentProvider
-                                              .selectedMethod
-                                              .isEmpty) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            // validadcion de metodo de pago
-                                            content: Text(
-                                              "Por favor seleccioná un método de pago",
-                                            ),
-                                          ),
-                                        );
-                                        return; // Evita que continúe si no hay método
-                                      }
-
-                                      sendOrder(context);
-                                      // Vacía el formulario después de enviar el pedido
-                                      clearFormFields();
-                                    },
-                                    child: const Text(
-                                      'Enviar Pedido',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: AppColors.white,
-                                      ),
-                                    ),
-                                  ),
+                                Icon(
+                                  Icons.access_time_outlined,
+                                  size: 16,
+                                  color: AppColors.blueDark,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  '${widget.personal.horaDesde.substring(0, 5)} a ${widget.personal.horaHasta.substring(0, 5)}',
                                 ),
                               ],
                             ),
                           ],
                         ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 20,
+                            ),
+                            Text(
+                              widget.personal.calificacion.toStringAsFixed(1),
+                            ),
+                          ],
+                        ),
                       ),
+                    ),
 
-                      SizedBox(height: 30),
-                    ],
-                  ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Text(
+                              "Metodo de Pago",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          // SELECTOR DE METODO DE PAGO
+                          const SelectMetodPay(),
+                          const SizedBox(height: 20),
+                          // Nuevos campos para facturación
+                          Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Text(
+                              "Datos de Facturacion",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          TextFormField(
+                            controller: razonSocialController,
+                            decoration: InputDecoration(
+                              labelText: 'Razón Social',
+                              prefixIcon: const Icon(Icons.person_pin_rounded),
+                              border: outlineInputBorder,
+                            ),
+                            validator: (value) {
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          TextFormField(
+                            controller: rucController,
+                            decoration: InputDecoration(
+                              labelText: 'RUC/Cédula',
+                              prefixIcon: const Icon(Icons.info),
+                              border: outlineInputBorder,
+                            ),
+                            validator: (value) {
+                              // Este campo tampoco es obligatorio
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 20),
+
+                          Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Text(
+                              "Datos adhicionales",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          TextFormField(
+                            controller: datoAdhicionalController,
+                            decoration: InputDecoration(
+                              labelText: 'Tocar timbre, limpiar bien los...',
+                              prefixIcon: const Icon(Icons.person_pin_rounded),
+                              border: outlineInputBorder,
+                            ),
+                            validator: (value) {
+                              return null;
+                            },
+                          ),
+
+                          SizedBox(height: 30),
+
+                          Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Text(
+                              "Resumen general",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+
+                          Column(
+                            children: [
+                              DatoEnDosColumnas(
+                                textoIzquierdo: "Horas:",
+                                textoDerecho:
+                                    '${widget.solicitud.duracionHoras}',
+                                colorFondo: AppColors.grayLight,
+                                fontSize: 14,
+                              ),
+
+                              DatoEnDosColumnas(
+                                textoIzquierdo: "Frecuencia:",
+                                textoDerecho: widget.solicitud.frecuencia,
+                                colorFondo: AppColors.white,
+                                fontSize: 14,
+                              ),
+
+                              DatoEnDosColumnas(
+                                textoIzquierdo: "Inicio:",
+                                textoDerecho:
+                                    DateFormat('EEEE d MMMM y', 'es_PY')
+                                        .format(widget.solicitud.fecha)
+                                        .toString()
+                                        .capitalizeFirst(),
+                                colorFondo: AppColors.grayLight,
+                                fontSize: 12,
+                              ),
+
+                              DatoEnDosColumnas(
+                                textoIzquierdo: "Horarios:",
+                                textoDerecho:
+                                    '${widget.solicitud.rangoHorario.start.round()}:00 a ${widget.solicitud.rangoHorario.end.round()}:00',
+                                colorFondo: AppColors.white,
+                                fontSize: 14,
+                              ),
+
+                              DatoEnDosColumnas(
+                                textoIzquierdo: "Ubicación:",
+                                textoDerecho:
+                                    widget.solicitud.ubicacion.nombreUbicacion,
+                                colorFondo: AppColors.grayLight,
+                                fontSize: 14,
+                              ),
+
+                              DatoEnDosColumnas(
+                                textoIzquierdo: "Costo diario:",
+                                textoDerecho:
+                                    '₲. ${numberFormat(costoTotal.toStringAsFixed(0))}',
+                                colorFondo: AppColors.white,
+                                fontSize: 14,
+                              ),
+
+                              Container(
+                                color: Color.fromARGB(255, 182, 208, 231),
+
+                                child: DatoEnDosColumnas(
+                                  textoIzquierdo: "Total + IVA:",
+                                  textoDerecho:
+                                      '₲. ${numberFormat(costoTotal.toStringAsFixed(0))}',
+                                  colorFondo: Colors.transparent,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(height: 30),
+
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.blueDark,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12.0,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(24),
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    print('Costo : $costoTotal ');
+                                    // final authProvider =
+                                    //     Provider.of<local_auth.AuthProvider>(
+                                    //       context,
+                                    //       listen: false,
+                                    //     );
+                                    final clienteId =
+                                        Provider.of<AuthProvider>(
+                                          context,
+                                          listen: false,
+                                        ).userId;
+                                    if (clienteId == null) {
+                                      return;
+                                    }
+                                    // VALIDAR METODO DE PAGO
+                                    if (paymentProvider.selectedMethod == "/" ||
+                                        paymentProvider
+                                            .selectedMethod
+                                            .isEmpty) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          // validadcion de metodo de pago
+                                          content: Text(
+                                            "Por favor seleccioná un método de pago",
+                                          ),
+                                        ),
+                                      );
+                                      return; // Evita que continúe si no hay método
+                                    }
+
+                                    sendOrder(context);
+                                    // Vacía el formulario después de enviar el pedido
+                                    clearFormFields();
+                                  },
+                                  child: const Text(
+                                    'Enviar Pedido',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: AppColors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 40),
+                  ],
                 ),
               ),
+            ),
 
-              // BOTONERA INFERIOR
-            ],
-          ),
+            // BOTONERA INFERIOR
+          ],
         ),
       ),
     );
@@ -564,12 +564,14 @@ class DatoEnDosColumnas extends StatelessWidget {
   final String textoIzquierdo;
   final String textoDerecho;
   final Color colorFondo;
+  final int fontSize;
 
   const DatoEnDosColumnas({
     super.key,
     required this.textoIzquierdo,
     required this.textoDerecho,
     required this.colorFondo,
+    required this.fontSize,
   });
 
   @override
@@ -587,7 +589,13 @@ class DatoEnDosColumnas extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            Expanded(child: Text(textoDerecho, textAlign: TextAlign.end)),
+            Expanded(
+              child: Text(
+                textoDerecho,
+                textAlign: TextAlign.end,
+                style: TextStyle(fontSize: fontSize.toDouble()),
+              ),
+            ),
           ],
         ),
       ),

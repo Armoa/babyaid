@@ -33,38 +33,38 @@ class _SelectorUbicacionState extends State<SelectorUbicacion> {
     return Scaffold(
       backgroundColor: AppColors.blueDark,
       appBar: AppBar(
-        leading: Column(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
+        automaticallyImplyLeading: false,
+        leading: null,
+        toolbarHeight: 120,
         title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 20),
-            const Text(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.arrow_back),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: Image.asset('assets/logo-blanco.png', scale: 2.5),
+                ),
+              ],
+            ),
+            SizedBox(height: 25),
+            Text(
               "¿A dónde vamos?",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+            SizedBox(height: 25),
           ],
         ),
-        actions: [
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 20, 0),
-                child: Image.asset('assets/logo-blanco.png', scale: 4),
-              ),
-            ],
-          ),
-        ],
-
-        backgroundColor: AppColors.blueDark,
-        toolbarHeight: 120,
       ),
       body: Container(
         decoration: BoxDecoration(

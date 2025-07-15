@@ -45,31 +45,43 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Map<String, dynamic>?> loginUser(
-    String username,
-    String password,
-  ) async {
-    final url = Uri.parse("https://farma.staweno.com/login.php");
+  Future<Map<String, dynamic>?> loginUser(String email, String password) async {
+    final url = Uri.parse("https://helfer.flatzi.com/login.php");
 
     try {
+      print('LOGIN: $email | $password');
+
       final response = await http.post(
         url,
-        body: {'name': username, 'password': password},
+        body: {'email': email, 'password': password},
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        _user = UsuarioModel.fromJson(data['user']);
-        userId = _user!.id; // 🔥 Asegurar que `userId` se asigna correctamente
 
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('user', json.encode(data['user']));
-        await prefs.setBool('isLogged', true);
+        if (data['status'] == 'success') {
+          final usuarioJson = data['user'];
+          _user = UsuarioModel.fromJson(usuarioJson);
+          userId = _user!.id;
 
-        notifyListeners();
-        return data;
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('user', json.encode(usuarioJson));
+          await prefs.setBool('isLogged', true);
+
+          notifyListeners();
+          return data;
+        } else {
+          return {
+            "status": "error",
+            "message": data['message'] ?? "Usuario o contraseña incorrectos",
+          };
+        }
       } else {
-        return {"status": "error", "message": "Error de conexión"};
+        return {
+          "status": "error",
+          "message":
+              "Servidor no respondió correctamente (${response.statusCode})",
+        };
       }
     } catch (e) {
       return {

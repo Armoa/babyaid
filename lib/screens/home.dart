@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:helfer/model/colors.dart';
 import 'package:helfer/model/servicios.dart';
 import 'package:helfer/provider/auth_provider.dart' as local_auth_provider;
+import 'package:helfer/screens/care_screen.dart';
 import 'package:helfer/screens/detalles_servicios.dart';
+import 'package:helfer/screens/estado_cuenta.dart';
+import 'package:helfer/screens/kids_screen.dart';
+import 'package:helfer/screens/mis_servicios.dart';
 import 'package:helfer/screens/my_acount.dart';
-import 'package:helfer/screens/my_cupon.dart';
-import 'package:helfer/screens/notification_screen.dart';
+import 'package:helfer/screens/plus_screen.dart';
 import 'package:helfer/screens/selector_ubicacion.dart';
 import 'package:helfer/screens/show_promo_banner.dart';
 import 'package:helfer/services/fetch_active_banner.dart';
@@ -35,14 +38,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   late final PageController _controller;
-
   late final List<Servicio> serviciosLoop = List.generate(
     repeticiones,
     (index) => servicios[index % servicios.length],
   );
 
   final int repeticiones = 1000;
-
   final List<Servicio> servicios = [
     Servicio(
       nombre: 'Limplieza del Hogar',
@@ -72,10 +73,10 @@ class _MyHomePageState extends State<MyHomePage> {
     final int initialLoopIndex = (repeticiones / 2).floor();
     _controller = PageController(
       initialPage: initialLoopIndex,
-      viewportFraction: 0.45, // 👈 Esto permite ver los ítems laterales
+      viewportFraction: 0.45,
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {}); // 🔁 Fuerza actualización después del build inicial
+      setState(() {});
     });
     // Verifica si hay un banner activo al iniciar
     _checkForPromoBanner();
@@ -96,14 +97,95 @@ class _MyHomePageState extends State<MyHomePage> {
       if (imagen != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           showPromoBanner(context);
-          prefs.setBool(
-            'bannerShown',
-            true,
-          ); // Guarda que el banner ha sido mostrado
+          prefs.setBool('bannerShown', true);
         });
       }
     }
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: Seccion.values.indexOf(_seccionActual),
+        children: [
+          HomeMainScreen(
+            controller: _controller,
+            serviciosLoop: serviciosLoop,
+            servicios: servicios,
+          ),
+          const MisServicios(),
+          const EstadoCuenta(),
+          const MyAcount(),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(color: Colors.white),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+          child: BottomNavigationBar(
+            backgroundColor: const Color.fromARGB(255, 245, 245, 245),
+            type: BottomNavigationBarType.fixed,
+            currentIndex: Seccion.values.indexOf(_seccionActual),
+            onTap: (index) => _navegarA(Seccion.values[index]),
+            selectedItemColor: AppColors.blueSky, // Color activo
+            unselectedItemColor: Colors.grey,
+            showUnselectedLabels: false,
+            items: [
+              BottomNavigationBarItem(
+                icon: Image.asset('assets/icons/home.png', scale: 2.5),
+                activeIcon: Image.asset(
+                  'assets/icons/home-active.png',
+                  scale: 2.5,
+                ),
+                label: '',
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset('assets/icons/list.png', scale: 2.5),
+                activeIcon: Image.asset(
+                  'assets/icons/list-active.png',
+                  scale: 2.5,
+                ),
+                label: '',
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset('assets/icons/pay.png', scale: 2.5),
+                activeIcon: Image.asset(
+                  'assets/icons/pay-active.png',
+                  scale: 2.5,
+                ),
+                label: '',
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset('assets/icons/user.png', scale: 2.5),
+                activeIcon: Image.asset(
+                  'assets/icons/user-active.png',
+                  scale: 2.5,
+                ),
+                label: '',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HomeMainScreen extends StatelessWidget {
+  final PageController controller;
+  final List<Servicio> serviciosLoop;
+  final List<Servicio> servicios;
+
+  const HomeMainScreen({
+    required this.controller,
+    required this.serviciosLoop,
+    required this.servicios,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -112,84 +194,40 @@ class _MyHomePageState extends State<MyHomePage> {
       listen: false,
     );
     final nombre = authProvider.user?.name ?? 'Usuario';
+
     return Scaffold(
       backgroundColor: AppColors.blueDark,
       appBar: AppBar(
-        leading: Column(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                exit(0);
-              },
-            ),
-          ],
-        ),
         title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: () {
+                    exit(0);
+                  },
+                  child: Icon(Icons.arrow_back),
+                ),
+              ],
+            ),
+            SizedBox(height: 30),
             Text(
               "!Hola $nombre!",
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
+            SizedBox(height: 10),
             Text("¿Cómo podemos ayudare?", style: TextStyle(fontSize: 16)),
+            SizedBox(height: 30),
           ],
         ),
         toolbarHeight: 180,
       ),
-      body: IndexedStack(
-        index: Seccion.values.indexOf(_seccionActual),
-        children: [
-          HomeMain(
-            controller: _controller,
-            serviciosLoop: serviciosLoop,
-            servicios: servicios,
-          ),
-          NotificationScreen(),
-          CuponesScreen(),
-          MyAcount(),
-        ],
-      ),
-
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(color: Colors.white),
-
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
-          child: BottomNavigationBar(
-            backgroundColor: const Color.fromARGB(255, 223, 223, 223),
-            type: BottomNavigationBarType.fixed,
-            currentIndex: Seccion.values.indexOf(_seccionActual),
-            onTap: (index) => _navegarA(Seccion.values[index]),
-            selectedItemColor: AppColors.blueSky, // Color activo
-            unselectedItemColor: Colors.grey,
-            showUnselectedLabels: false,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_outlined),
-                activeIcon: Icon(Icons.home),
-                label: '●',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.checklist_outlined),
-                activeIcon: Icon(Icons.checklist), // Podés usar otro si querés
-                label: '●',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.account_balance_wallet_outlined),
-                activeIcon: Icon(Icons.account_balance_wallet),
-                label: '●',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person_outline),
-                activeIcon: Icon(Icons.person),
-                label: '●',
-              ),
-            ],
-          ),
-        ),
+      body: HomeMain(
+        controller: controller,
+        serviciosLoop: serviciosLoop,
+        servicios: servicios,
       ),
     );
   }
@@ -211,9 +249,9 @@ class HomeMain extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map<int, WidgetBuilder> rutasServicios = {
       1: (_) => SelectorUbicacion(),
-      2: (_) => SelectorUbicacion(),
-      3: (_) => SelectorUbicacion(),
-      4: (_) => SelectorUbicacion(),
+      2: (_) => KidsScreen(),
+      3: (_) => PlusScreen(),
+      4: (_) => CareScreen(),
     };
     return Container(
       decoration: BoxDecoration(

@@ -5,6 +5,7 @@ import 'package:helfer/model/solicitud_servicio_model.dart';
 import 'package:helfer/model/usuario_model.dart';
 import 'package:helfer/screens/elige_tu_helfer.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FrecuenciaServicio extends StatefulWidget {
   final UbicacionModel ubicacion;
@@ -30,38 +31,39 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
     return Scaffold(
       backgroundColor: AppColors.blueDark,
       appBar: AppBar(
-        leading: Column(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
+        automaticallyImplyLeading: false,
+        leading: null,
+        toolbarHeight: 120,
         title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.arrow_back),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: Image.asset('assets/logo-blanco.png', scale: 2.5),
+                ),
+              ],
+            ),
+            SizedBox(height: 25),
             Text(
               "¿Cuando vamos?",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+            SizedBox(height: 25),
           ],
         ),
-        actions: [
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 20, 0),
-                child: Image.asset('assets/logo-blanco.png', scale: 4),
-              ),
-            ],
-          ),
-        ],
-
         backgroundColor: AppColors.blueDark,
-        toolbarHeight: 120,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -309,16 +311,38 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
           ), // color del icono interno
         ),
       ),
-      child: CheckboxListTile(
-        value: politicaAceptada,
-        onChanged: (val) => setState(() => politicaAceptada = val ?? false),
-        title: const Text(
-          "Política de Cancelación +",
-          style: TextStyle(fontSize: 16),
-        ),
-        controlAffinity: ListTileControlAffinity.leading,
-        contentPadding: EdgeInsets.zero, // elimina ese espacio extra
-        dense: true, // hace más compacto el tile
+      child: Row(
+        children: [
+          Transform.scale(
+            scale: 1.3,
+            child: Checkbox(
+              value: politicaAceptada,
+              onChanged:
+                  (val) => setState(() => politicaAceptada = val ?? false),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: GestureDetector(
+              onTap: () async {
+                final uri = Uri.parse(
+                  "https://helfer.flatzi.com/app/terminos-condiciones.html",
+                );
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("No se pudo abrir el enlace")),
+                  );
+                }
+              },
+              child: Text(
+                'Política de cancelación (+)',
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

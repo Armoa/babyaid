@@ -3,13 +3,12 @@ import 'package:helfer/model/colors.dart';
 import 'package:helfer/provider/auth_provider.dart' as local_auth_provider;
 import 'package:helfer/provider/auth_provider.dart';
 import 'package:helfer/screens/address_screen.dart';
-import 'package:helfer/screens/my_orders.dart';
+import 'package:helfer/screens/home.dart';
 import 'package:helfer/screens/notification_screen.dart';
 import 'package:helfer/screens/perfil_screen.dart';
 import 'package:helfer/services/logout_user.dart';
 import 'package:helfer/services/obtener_usuario.dart';
-import 'package:helfer/widget/appbar.dart';
-import 'package:helfer/widget/drawer.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -25,13 +24,23 @@ class _MyAcountState extends State<MyAcount> {
   String? nombre;
   int? _idUser;
 
+  String appVersion = "Cargando...";
+
   late AuthProvider authProvider;
 
   @override
   void initState() {
     super.initState();
-    // Cargar datos iniciales del perfil
+    _getAppVersion();
     _cargarDatosPerfil();
+  }
+
+  // Funcion mostrar version del la App
+  Future<void> _getAppVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      appVersion = packageInfo.version;
+    });
   }
 
   Future<void> _cargarDatosPerfil() async {
@@ -59,13 +68,45 @@ class _MyAcountState extends State<MyAcount> {
             ? authProvider.user!.photo
             : 'https://cdn-icons-png.flaticon.com/512/64/64572.png';
 
-    print("Nombre : $nombre");
-    print("Foto : $photoUrl");
-
     return Scaffold(
-      backgroundColor: AppColors.blueLight,
-      appBar: const NewAppBar(),
-      drawer: const NewDrawer(),
+      appBar: AppBar(
+        toolbarHeight: 120,
+
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => MyHomePage()),
+                        (Route<dynamic> route) => false,
+                      );
+                    },
+                    child: Icon(Icons.arrow_back),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: Image.asset('assets/logo-blanco.png', scale: 2.5),
+                ),
+              ],
+            ),
+            SizedBox(height: 25),
+            Text(
+              "Mi cuenta",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+
+            SizedBox(height: 25),
+          ],
+        ),
+      ),
+
       body: Container(
         height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
@@ -139,17 +180,17 @@ class _MyAcountState extends State<MyAcount> {
                 const SizedBox(height: 20),
                 _widgetBloque1(context),
                 const SizedBox(height: 20),
-                _widgetBloque2(context, _idUser),
+
+                _widgetBloque2(context),
                 const SizedBox(height: 20),
                 _widgetBloque3(context),
-
                 const SizedBox(height: 30),
                 Row(
                   children: [
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.blueAcua,
+                          backgroundColor: AppColors.blueDark,
                         ),
                         onPressed: () async {
                           await logoutUser(context);
@@ -163,12 +204,50 @@ class _MyAcountState extends State<MyAcount> {
                           padding: EdgeInsets.all(10),
                           child: Text(
                             "Cerrar sesión",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
+                            style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
                       ),
                     ),
                   ],
+                ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.blueSky,
+                        ),
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.white,
+                          size: 24,
+                        ), // Aquí defines el icono que quieres mostrar
+                        label: const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            "Eliminar cuenta ",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 20),
+
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 18),
+                    child: Text(
+                      "Versión $appVersion",
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -230,46 +309,8 @@ Widget _widgetBloque1(context) {
   );
 }
 
-// Bloque 2
-Widget _widgetBloque2(BuildContext context, dynamic idUser) {
-  return Card(
-    elevation: 0,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        ListView(
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            ListTile(
-              leading: const Icon(Icons.payment_sharp),
-              title: const Text('Métodos de Pago'),
-              onTap: () {},
-              trailing: const Icon(Icons.arrow_forward_ios_outlined),
-            ),
-            ListTile(
-              leading: const Icon(Icons.list_rounded),
-              title: const Text('Mis Pedidos'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MyOrders(userId: idUser),
-                  ),
-                );
-              },
-              trailing: const Icon(Icons.arrow_forward_ios_outlined),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
 // Bloque 3
-Widget _widgetBloque3(BuildContext context) {
+Widget _widgetBloque2(BuildContext context) {
   return Card(
     elevation: 0,
     child: Column(
@@ -301,6 +342,49 @@ Widget _widgetBloque3(BuildContext context) {
                 'Información del servicio',
                 style: TextStyle(fontSize: 14),
               ),
+              onTap: () {},
+              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+// Bloque 3
+Widget _widgetBloque3(BuildContext context) {
+  return Card(
+    elevation: 0,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        ListView(
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            ListTile(
+              leading: const Icon(Icons.question_mark),
+              title: const Text('Preguntas frecuentes'),
+              onTap: () {},
+              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+            ),
+            ListTile(
+              leading: const Icon(Icons.verified),
+              title: const Text('Política de calidad'),
+              onTap: () {},
+              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+            ),
+            ListTile(
+              leading: const Icon(Icons.privacy_tip),
+              title: const Text('Política de privacidad'),
+              onTap: () {},
+              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+            ),
+            ListTile(
+              leading: const Icon(Icons.error_outline_sharp),
+              title: const Text('Términos y condiciones'),
               onTap: () {},
               trailing: const Icon(Icons.arrow_forward_ios_outlined),
             ),
