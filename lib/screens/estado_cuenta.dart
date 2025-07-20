@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helfer/model/colors.dart';
 import 'package:helfer/provider/auth_provider.dart' as local_auth_provider;
+import 'package:helfer/provider/auth_provider.dart';
 import 'package:helfer/screens/home.dart';
 import 'package:helfer/services/fetch_order_detalles.dart';
 import 'package:helfer/services/functions.dart';
@@ -23,7 +24,7 @@ class EstadoCuenta extends StatefulWidget {
 }
 
 class _EstadoCuentaState extends State<EstadoCuenta> {
-  late Future<List<OrderDetalle>> _orderDetallesFuture;
+  Future<List<OrderDetalle>>? _orderDetallesFuture;
   int? _tileActivo;
   DateTime _currentMonth = DateTime.now();
 
@@ -46,13 +47,22 @@ class _EstadoCuentaState extends State<EstadoCuenta> {
   @override
   void initState() {
     super.initState();
+    _setup();
+  }
 
-    authProvider = Provider.of<local_auth_provider.AuthProvider>(
-      context,
-      listen: false,
-    );
-    userId = authProvider.user?.id;
-    _orderDetallesFuture = fetchOrderDetalles(userId!);
+  void _setup() async {
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+    await authProvider.loadUser(); // Asegura que SharedPreferences se lee
+    final id = authProvider.user?.id;
+
+    if (id != null) {
+      setState(() {
+        userId = id;
+        _orderDetallesFuture = fetchOrderDetalles(id);
+      });
+    } else {
+      print("⚠️ El ID de usuario aún no está disponible");
+    }
   }
 
   // Función para avanzar o retroceder el mes
@@ -240,7 +250,7 @@ class _EstadoCuentaState extends State<EstadoCuenta> {
                                     ).format(_currentMonth).capitalizeFirst(),
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

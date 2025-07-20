@@ -37,31 +37,39 @@ class AuthService {
 
         // 🔥 Obtener ID real desde MySQL
         String apiUrl =
-            "https://helfer.flatzi.com/app/get_user_id.php?email=${firebaseUser.email}";
+            "https://helfer.flatzi.com/app/get_user.php?email=${firebaseUser.email}";
         var response = await http.get(Uri.parse(apiUrl));
 
         int userId = 0; // ID por defecto
         if (response.statusCode == 200) {
           var jsonResponse = jsonDecode(response.body);
-          userId = jsonResponse["user_id"];
+          userId =
+              int.tryParse(
+                jsonResponse["user_id"]?.toString() ??
+                    jsonResponse["id"]?.toString() ??
+                    "0",
+              ) ??
+              0;
         }
-
+        print('ID User: $userId');
         // 🔥 Crear usuario con datos de Google
         final UsuarioModel user = UsuarioModel(
           id: userId,
           name: firebaseUser.displayName ?? '',
-          lastName: '', // Provide appropriate value if available
-          address: '', // Provide appropriate value if available
-          phone: '', // Provide appropriate value if available
-          city: '', // Provide appropriate value if available
-          barrio: '', // Provide appropriate value if available
-          razonsocial: '', // Provide appropriate value if available
-          ruc: '', // Provide appropriate value if available
-          dateBirth: '', // Provide appropriate value if available
-          dateCreated: '', // Provide appropriate value if available
+          lastName: '',
+          address: '',
+          phone: '',
+          city: '',
+          barrio: '',
+          razonsocial: '',
+          ruc: '',
+          dateBirth: '',
+          dateCreated: '',
           email: firebaseUser.email ?? '',
           photo: firebaseUser.photoURL ?? '',
           token: googleAuth.idToken ?? '',
+          tipoCi: '',
+          ci: '',
         );
 
         // 🔥 Guardar datos en `AuthProvider`
@@ -70,16 +78,9 @@ class AuthService {
           listen: false,
         ).setUserAuthenticated(user);
 
-        // 🔥 Guardar datos en `SharedPreferences`
-        await prefs.setString(
-          'user',
-          json.encode({
-            "name": user.name,
-            "email": user.email,
-            "photo": user.photo,
-            "token": user.token,
-          }),
-        );
+        // ✅ Guardar todos los datos en SharedPreferences (solo una vez)
+        await prefs.setString('user', json.encode(user.toJson()));
+        await prefs.setBool('isLogged', true);
         await prefs.setString('token', user.token);
 
         return user; // ✅ Retorna el usuario correctamente
@@ -113,6 +114,8 @@ class AuthService {
         dateCreated: userJson['dateCreated'] ?? '',
         email: userJson['email'] ?? '',
         photo: userJson['photo'] ?? '',
+        tipoCi: userJson['tipoCi'] ?? '',
+        ci: userJson['ci'] ?? '',
         token: tokenData,
       );
     }

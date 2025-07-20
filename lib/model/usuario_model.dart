@@ -15,6 +15,8 @@ class UsuarioModel {
   final String dateBirth;
   final String dateCreated;
   final String token;
+  final String tipoCi;
+  final String ci;
 
   UsuarioModel({
     required this.id,
@@ -29,6 +31,8 @@ class UsuarioModel {
     required this.barrio,
     required this.razonsocial,
     required this.ruc,
+    required this.tipoCi,
+    required this.ci,
 
     required this.dateBirth,
     required this.dateCreated,
@@ -51,8 +55,29 @@ class UsuarioModel {
       dateBirth: json["date_birth"] ?? "",
       dateCreated: json["date"] ?? "",
       token: json['token'] ?? '',
+      tipoCi: json["tipo_ci"] ?? "",
+      ci: json["ci"] ?? "",
     );
   }
+  //  MODELO ESPECIAL PARA GOOGLE
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "last_name": lastName,
+    "email": email,
+    "photo": photo,
+    "address": address,
+    "phone": phone,
+    "city": city,
+    "barrio": barrio,
+    "razonsocial": razonsocial,
+    "ruc": ruc,
+    "date_birth": dateBirth,
+    "date": dateCreated,
+    "token": token,
+    "tipo_ci": tipoCi,
+    "ci": ci,
+  };
 }
 
 // ubicaciones Modelo

@@ -8,6 +8,7 @@ import 'package:helfer/provider/payment_provider.dart';
 import 'package:helfer/provider/theme.dart';
 import 'package:helfer/provider/wishlist_provider.dart';
 import 'package:helfer/screens/home.dart';
+import 'package:helfer/screens/login.dart';
 import 'package:helfer/services/firebase_messaging_service.dart';
 import 'package:helfer/services/notificaction.dart';
 import 'package:helfer/splash_screen.dart';
@@ -54,7 +55,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-
       themeMode: themeProvider.themeMode,
       theme: lightTheme,
       darkTheme: darkTheme,
@@ -62,6 +62,7 @@ class MyApp extends StatelessWidget {
       routes: {
         'MyHomePage': (context) => const MyHomePage(),
         'SplashScreenState': (context) => SplashScreen(),
+        'login': (context) => LoginScreen(),
       },
     );
   }

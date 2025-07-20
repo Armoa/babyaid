@@ -33,8 +33,14 @@ class LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         backgroundColor: Colors.transparent,
+        title: Text(
+          "Iniciar Sessión",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.blueDark),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white),
+
           onPressed: () {
             exit(0);
           },
@@ -53,7 +59,7 @@ class LoginScreenState extends State<LoginScreen> {
         ),
         child: SingleChildScrollView(
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.94,
+            height: MediaQuery.of(context).size.height * 0.89,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: Column(
@@ -63,10 +69,7 @@ class LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.all(20),
                     child: Image.asset("assets/logo.png", scale: 4),
                   ),
-                  Text(
-                    "Iniciar Sessión",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  ),
+
                   const SizedBox(height: 30.0),
                   TextFormField(
                     controller: emailController,
@@ -237,9 +240,6 @@ class LoginScreenState extends State<LoginScreen> {
                             UsuarioModel? user = await AuthService()
                                 .signInWithGoogle(context);
                             if (user != null) {
-                              // Guardar usuario en la base de datos MySQL
-                              await guardarUsuarioEnMySQL();
-
                               // Mostrar mensaje de bienvenida
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -248,13 +248,8 @@ class LoginScreenState extends State<LoginScreen> {
                                 ),
                               );
 
-                              // Redirigir a MyHomePage después del mensaje
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MyHomePage(),
-                                ),
-                              );
+                              // Ejecutar guardado y redirección desde ahí
+                              await guardarUsuarioEnMySQL(context);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -266,6 +261,39 @@ class LoginScreenState extends State<LoginScreen> {
                               );
                             }
                           },
+                          // onPressed: () async {
+                          //   UsuarioModel? user = await AuthService()
+                          //       .signInWithGoogle(context);
+                          //   if (user != null) {
+                          //     // Guardar usuario en la base de datos MySQL
+                          //     await guardarUsuarioEnMySQL();
+
+                          //     // Mostrar mensaje de bienvenida
+                          //     ScaffoldMessenger.of(context).showSnackBar(
+                          //       SnackBar(
+                          //         content: Text("Bienvenido, ${user.name}!"),
+                          //         duration: Duration(seconds: 2),
+                          //       ),
+                          //     );
+
+                          //     // Redirigir a MyHomePage después del mensaje
+                          //     Navigator.pushReplacement(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //         builder: (context) => MyHomePage(),
+                          //       ),
+                          //     );
+                          //   } else {
+                          //     ScaffoldMessenger.of(context).showSnackBar(
+                          //       SnackBar(
+                          //         content: Text(
+                          //           "Error al iniciar sesión. Inténtalo de nuevo.",
+                          //         ),
+                          //         duration: Duration(seconds: 2),
+                          //       ),
+                          //     );
+                          //   }
+                          // },
                         ),
                       ),
                     ],

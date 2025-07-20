@@ -38,7 +38,6 @@ class AuthProvider with ChangeNotifier {
   }
 
   // ✅ Notificar cambios para actualizar la UI
-
   void setUserAuthenticated(UsuarioModel user) {
     _user = user;
     userId = user.id;
@@ -91,50 +90,69 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>?> registerUser(
-    String username,
-    String email,
-    String password,
-  ) async {
-    final url = Uri.parse("https://farma.staweno.com/register.php");
+  // Future<Map<String, dynamic>?> registerUser(
+  //   String username,
+  //   String email,
+  //   String password,
+  // ) async {
+  //   final url = Uri.parse("https://farma.staweno.com/register.php");
 
-    try {
-      final response = await http.post(
-        url,
-        body: {'name': username, 'email': email, 'password': password},
-      );
+  //   try {
+  //     final response = await http.post(
+  //       url,
+  //       body: {'name': username, 'email': email, 'password': password},
+  //     );
 
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        return responseData; // 🔥 Retorna un mapa en lugar de un String
-      } else {
-        return {"status": "error", "message": "Error de conexión"};
-      }
-    } catch (e) {
-      return {
-        "status": "error",
-        "message": "Error al conectar con el servidor",
-      };
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       final responseData = json.decode(response.body);
+  //       return responseData; // 🔥 Retorna un mapa en lugar de un String
+  //     } else {
+  //       return {"status": "error", "message": "Error de conexión"};
+  //     }
+  //   } catch (e) {
+  //     return {
+  //       "status": "error",
+  //       "message": "Error al conectar con el servidor",
+  //     };
+  //   }
+  // }
 
   Future<void> loadUser() async {
     final prefs = await SharedPreferences.getInstance();
     final userData = prefs.getString('user');
-    final tokenData = prefs.getString('token');
     final isLogged = prefs.getBool('isLogged') ?? false;
 
-    print("Datos recuperados de SharedPreferences:");
-    print("SharedPreferences: $userData");
-    print("Token: $tokenData");
-
-    if (userData != null && isLogged) {
-      final userJson = json.decode(userData);
-      _user = UsuarioModel.fromJson(userJson);
-      userId = _user!.id;
-      notifyListeners();
+    if (userData != null && userData.trim().isNotEmpty && isLogged) {
+      try {
+        final userJson = json.decode(userData);
+        _user = UsuarioModel.fromJson(userJson);
+        userId = _user!.id;
+        notifyListeners();
+      } catch (e) {
+        print("❌ Error al decodificar usuario: $e");
+      }
+    } else {
+      print("⚠️ Datos de usuario no disponibles o vacíos.");
     }
   }
+
+  // Future<void> loadUser() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final userData = prefs.getString('user');
+  //   final tokenData = prefs.getString('token');
+  //   final isLogged = prefs.getBool('isLogged') ?? false;
+
+  //   print("Datos recuperados de SharedPreferences:");
+  //   print("SharedPreferences: $userData");
+  //   print("Token: $tokenData");
+
+  //   if (userData != null && isLogged) {
+  //     final userJson = json.decode(userData);
+  //     _user = UsuarioModel.fromJson(userJson);
+  //     userId = _user!.id;
+  //     notifyListeners();
+  //   }
+  // }
 
   // CERRAR SESSION
   void clearUserData() {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helfer/model/colors.dart';
 import 'package:helfer/provider/auth_provider.dart';
-import 'package:helfer/screens/perfil_screen_update.dart';
+import 'package:helfer/screens/perfil_update.dart';
 import 'package:helfer/services/obtener_usuario.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -318,8 +318,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder:
-                                    (context) => const ProfileUpdateScreen(),
+                                builder: (context) => const PerfilUpdate(),
                               ),
                             );
                           },

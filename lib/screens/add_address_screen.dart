@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:helfer/model/colors.dart';
 import 'package:helfer/model/mapa_city.dart';
 import 'package:helfer/model/usuario_model.dart';
-import 'package:helfer/screens/address_screen.dart';
 import 'package:helfer/screens/mapaScreen.dart';
+import 'package:helfer/screens/selector_ubicacion.dart';
 import 'package:helfer/services/obtener_usuario.dart';
 import 'package:helfer/services/perfil_service.dart';
 
@@ -26,9 +26,7 @@ class AddAddressScreenState extends State<AddAddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blueAcua,
       appBar: AppBar(
-        backgroundColor: AppColors.blueAcua,
         surfaceTintColor: Colors.transparent,
         title: const Text("Agregar direcciones"),
       ),
@@ -139,7 +137,7 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.grayLight,
+                          backgroundColor: AppColors.blueSky,
                         ),
                         onPressed: () {
                           if (ciudadSeleccionada != null &&
@@ -221,7 +219,8 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                                   // ignore: use_build_context_synchronously
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const AddressScreen(),
+                                    builder:
+                                        (context) => const SelectorUbicacion(),
                                   ),
                                 );
                               }

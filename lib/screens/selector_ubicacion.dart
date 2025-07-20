@@ -3,8 +3,11 @@ import 'package:helfer/model/colors.dart';
 import 'package:helfer/model/usuario_model.dart';
 import 'package:helfer/screens/add_address_screen.dart';
 import 'package:helfer/screens/frecuencia_servicios.dart';
+import 'package:helfer/screens/perfil_update.dart';
 import 'package:helfer/services/delete_address.dart';
+import 'package:helfer/services/obtener_usuario.dart';
 import 'package:helfer/services/ubicacion_service.dart';
+import 'package:helfer/services/verificar_datos_faltantes.dart';
 
 class SelectorUbicacion extends StatefulWidget {
   const SelectorUbicacion({super.key});
@@ -20,12 +23,52 @@ class _SelectorUbicacionState extends State<SelectorUbicacion> {
   void initState() {
     super.initState();
     _ubicacionesFuture = obtenerUbicaciones(); // Cargar direcciones al iniciar
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      verificarPerfilUsuario(context);
+    });
   }
 
   void actualizarLista() {
     setState(() {
       _ubicacionesFuture = obtenerUbicaciones(); // Recargar direcciones
     });
+  }
+
+  Future<void> verificarPerfilUsuario(BuildContext context) async {
+    UsuarioModel? usuario = await obtenerUsuarioDesdeMySQL();
+    if (usuario == null) return;
+    List<String> datosFaltantes = verificarDatosFaltantes(usuario);
+    if (datosFaltantes.isNotEmpty) {
+      mostrarPopup(context, datosFaltantes);
+    }
+  }
+
+  void mostrarPopup(BuildContext context, List<String> datosFaltantes) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Actualiza tu perfil"),
+          content: Text("Falta completar: ${datosFaltantes.join(", ")}"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Cerrar"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PerfilUpdate()),
+                );
+              },
+              child: Text("Actualizar"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

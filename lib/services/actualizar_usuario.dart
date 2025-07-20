@@ -14,6 +14,8 @@ Future<bool> actualizarUsuarioEnMySQL(
   String razonsocial,
   String ruc,
   String dateBirth,
+  String ci,
+  String tipoCi,
 ) async {
   final prefs = await SharedPreferences.getInstance();
   final userString = prefs.getString('user');
@@ -37,6 +39,8 @@ Future<bool> actualizarUsuarioEnMySQL(
     "razonsocial": razonsocial,
     "ruc": ruc,
     "date_birth": dateBirth,
+    "ci": ci,
+    "tipo_ci": tipoCi,
   };
 
   print("Datos enviados: ${jsonEncode(userData)}");

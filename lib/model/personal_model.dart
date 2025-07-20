@@ -42,3 +42,33 @@ class PersonalModel {
     );
   }
 }
+
+// CALIFICACION DE PERSONAL
+class PersonalCalificado {
+  final int id;
+  final String nombre;
+  final String apellido;
+  final String foto;
+  final double promedio;
+  final List<String> comentarios;
+
+  PersonalCalificado({
+    required this.id,
+    required this.nombre,
+    required this.apellido,
+    required this.foto,
+    required this.promedio,
+    required this.comentarios,
+  });
+
+  factory PersonalCalificado.fromJson(Map<String, dynamic> json) {
+    return PersonalCalificado(
+      id: int.tryParse(json['id'].toString()) ?? 0,
+      nombre: json['nombre'],
+      apellido: json['apellido'],
+      foto: json['foto'],
+      promedio: double.tryParse(json['promedio'].toString()) ?? 0,
+      comentarios: List<String>.from(json['comentarios'] ?? []),
+    );
+  }
+}

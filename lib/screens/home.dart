@@ -198,6 +198,8 @@ class HomeMainScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.blueDark,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: null,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

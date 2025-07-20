@@ -4,6 +4,7 @@ import 'package:helfer/provider/auth_provider.dart' as local_auth_provider;
 import 'package:helfer/provider/auth_provider.dart';
 import 'package:helfer/screens/address_screen.dart';
 import 'package:helfer/screens/home.dart';
+import 'package:helfer/screens/list_personal_calificacion.dart';
 import 'package:helfer/screens/notification_screen.dart';
 import 'package:helfer/screens/perfil_screen.dart';
 import 'package:helfer/services/logout_user.dart';
@@ -11,6 +12,7 @@ import 'package:helfer/services/obtener_usuario.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyAcount extends StatefulWidget {
   const MyAcount({super.key});
@@ -22,7 +24,7 @@ class MyAcount extends StatefulWidget {
 class _MyAcountState extends State<MyAcount> {
   String? photoUrl;
   String? nombre;
-  int? _idUser;
+  // int? _idUser;
 
   String appVersion = "Cargando...";
 
@@ -50,7 +52,7 @@ class _MyAcountState extends State<MyAcount> {
     setState(() {
       nombre = datosPerfil?.name;
       photoUrl = datosPerfil?.photo;
-      _idUser = datosPerfil?.id;
+      // _idUser = datosPerfil?.id;
     });
   }
 
@@ -71,7 +73,6 @@ class _MyAcountState extends State<MyAcount> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 120,
-
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -180,7 +181,6 @@ class _MyAcountState extends State<MyAcount> {
                 const SizedBox(height: 20),
                 _widgetBloque1(context),
                 const SizedBox(height: 20),
-
                 _widgetBloque2(context),
                 const SizedBox(height: 20),
                 _widgetBloque3(context),
@@ -204,7 +204,7 @@ class _MyAcountState extends State<MyAcount> {
                           padding: EdgeInsets.all(10),
                           child: Text(
                             "Cerrar sesión",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),
                       ),
@@ -219,7 +219,23 @@ class _MyAcountState extends State<MyAcount> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.blueSky,
                         ),
-                        onPressed: () {},
+                        onPressed: () async {
+                          final uri = Uri.parse(
+                            "https://helfer.flatzi.com/delete_request.html",
+                          );
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(
+                              uri,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("No se pudo abrir el enlace"),
+                              ),
+                            );
+                          }
+                        },
                         icon: const Icon(
                           Icons.delete_outline,
                           color: Colors.white,
@@ -229,7 +245,7 @@ class _MyAcountState extends State<MyAcount> {
                           padding: EdgeInsets.all(10),
                           child: Text(
                             "Eliminar cuenta ",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
+                            style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
                         ),
                       ),
@@ -237,7 +253,7 @@ class _MyAcountState extends State<MyAcount> {
                   ],
                 ),
 
-                SizedBox(height: 20),
+                SizedBox(height: 30),
 
                 Align(
                   alignment: Alignment.bottomCenter,
@@ -345,6 +361,22 @@ Widget _widgetBloque2(BuildContext context) {
               onTap: () {},
               trailing: const Icon(Icons.arrow_forward_ios_outlined),
             ),
+            ListTile(
+              leading: const Icon(Icons.hotel_class_sharp),
+              title: const Text(
+                'Los mejores Helfer',
+                style: TextStyle(fontSize: 14),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RankingPersonalScreen(),
+                  ),
+                );
+              },
+              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+            ),
           ],
         ),
       ],
@@ -366,25 +398,37 @@ Widget _widgetBloque3(BuildContext context) {
           children: [
             ListTile(
               leading: const Icon(Icons.question_mark),
-              title: const Text('Preguntas frecuentes'),
+              title: const Text(
+                'Preguntas frecuentes',
+                style: TextStyle(fontSize: 14),
+              ),
               onTap: () {},
               trailing: const Icon(Icons.arrow_forward_ios_outlined),
             ),
             ListTile(
               leading: const Icon(Icons.verified),
-              title: const Text('Política de calidad'),
+              title: const Text(
+                'Política de calidad',
+                style: TextStyle(fontSize: 14),
+              ),
               onTap: () {},
               trailing: const Icon(Icons.arrow_forward_ios_outlined),
             ),
             ListTile(
               leading: const Icon(Icons.privacy_tip),
-              title: const Text('Política de privacidad'),
+              title: const Text(
+                'Política de privacidad',
+                style: TextStyle(fontSize: 14),
+              ),
               onTap: () {},
               trailing: const Icon(Icons.arrow_forward_ios_outlined),
             ),
             ListTile(
               leading: const Icon(Icons.error_outline_sharp),
-              title: const Text('Términos y condiciones'),
+              title: const Text(
+                'Términos y condiciones',
+                style: TextStyle(fontSize: 14),
+              ),
               onTap: () {},
               trailing: const Icon(Icons.arrow_forward_ios_outlined),
             ),

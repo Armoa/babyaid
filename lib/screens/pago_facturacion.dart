@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:helfer/model/colors.dart';
 import 'package:helfer/model/personal_model.dart';
 import 'package:helfer/model/solicitud_servicio_model.dart';
+import 'package:helfer/model/usuario_model.dart';
 import 'package:helfer/provider/auth_provider.dart' as local_auth;
 import 'package:helfer/provider/auth_provider.dart';
 import 'package:helfer/provider/payment_provider.dart';
 import 'package:helfer/screens/home.dart';
 import 'package:helfer/services/functions.dart';
+import 'package:helfer/services/obtener_usuario.dart';
 import 'package:helfer/widget/select_metod_pay.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -75,6 +77,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
   @override
   void initState() {
     super.initState();
+    _cargarDatosUsuario();
   }
 
   // FUNCION DE ENVIO DE PEDIDO
@@ -174,6 +177,23 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
       ScaffoldMessenger.of(
         globalContext,
       ).showSnackBar(SnackBar(content: Text("Error inesperado: $e")));
+    }
+  }
+
+  // CARGAR DATOS DEL USUARIO
+  void _cargarDatosUsuario() async {
+    UsuarioModel? usuario = await obtenerUsuarioDesdeMySQL();
+    if (usuario != null) {
+      setState(() {
+        razonSocialController.text =
+            usuario.razonsocial.isNotEmpty
+                ? usuario.razonsocial
+                : "Razons no disponible";
+        rucController.text =
+            usuario.ruc.isNotEmpty ? usuario.ruc : "R.U.C no disponible";
+      });
+    } else {
+      print("Error: No se pudo obtener los datos del usuario.");
     }
   }
 
@@ -351,6 +371,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 10),
                           TextFormField(
                             controller: razonSocialController,
                             decoration: InputDecoration(
@@ -387,6 +408,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 10),
                           TextFormField(
                             controller: datoAdhicionalController,
                             decoration: InputDecoration(
@@ -404,7 +426,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                           Align(
                             alignment: Alignment.bottomLeft,
                             child: Text(
-                              "Resumen general",
+                              "Resumen General",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
