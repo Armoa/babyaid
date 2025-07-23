@@ -29,8 +29,8 @@ class PerfilUpdateState extends State<PerfilUpdate> {
   late TextEditingController _dateBirthController;
   late TextEditingController _ciController;
 
-  String _whatsapp = '';
   String _tipoDocumento = 'CI';
+  String _whatsapp = '';
   String _ci = '';
 
   @override
@@ -253,6 +253,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                     },
                     onSaved: (value) {
                       _ci = value!;
+                      debugPrint('Número guardado: $_ci');
                     },
                   ),
 
@@ -383,8 +384,8 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                       return null;
                     },
                     onSaved: (value) {
-                      // Aquí solo se guarda lo que el usuario escribió, sin el prefijo.
                       _whatsapp = value!;
+                      debugPrint('Número guardado: $_whatsapp');
                     },
                   ),
                   const SizedBox(height: 30),

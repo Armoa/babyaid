@@ -138,69 +138,116 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
               ),
 
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+                child: Stack(
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => {Navigator.pop(context)},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.graySoft,
-                        ),
-                        child: const Text(
-                          'Cancelar',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (!politicaAceptada) {
-                            _mostrarSnackPolitica(); // función que te dejo abajo 👇
-                            return;
-                          }
-
-                          if (fechaSeleccionada == null) {
-                            _mostrarSnackFecha(); // opcional: aviso si no se eligió fecha
-                            return;
-                          }
-
-                          final solicitud = SolicitudServicioModel(
-                            frecuencia: frecuencia,
-                            duracionHoras: duracionHoras,
-                            rangoHorario: rangoHoras,
-                            fecha: fechaSeleccionada!,
-                            ubicacion:
-                                widget
-                                    .ubicacion, // vuelve desde la pantalla anterior
-                          );
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) =>
-                                      ElegirHerfer(solicitud: solicitud),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => {Navigator.pop(context)},
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size.fromHeight(46),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(24),
+                                  topRight: Radius.circular(0),
+                                  bottomLeft: Radius.circular(24),
+                                  bottomRight: Radius.circular(0),
+                                ),
+                              ),
+                              backgroundColor: AppColors.blueDark,
                             ),
-                          );
-                        },
+                            child: const Text(
+                              'Cancelar',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
 
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.blueSky,
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (!politicaAceptada) {
+                                _mostrarSnackPolitica(); // función que te dejo abajo 👇
+                                return;
+                              }
+
+                              if (fechaSeleccionada == null) {
+                                _mostrarSnackFecha(); // opcional: aviso si no se eligió fecha
+                                return;
+                              }
+
+                              final solicitud = SolicitudServicioModel(
+                                frecuencia: frecuencia,
+                                duracionHoras: duracionHoras,
+                                rangoHorario: rangoHoras,
+                                fecha: fechaSeleccionada!,
+                                ubicacion:
+                                    widget
+                                        .ubicacion, // vuelve desde la pantalla anterior
+                              );
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) =>
+                                          ElegirHerfer(solicitud: solicitud),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size.fromHeight(46),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(0),
+                                  topRight: Radius.circular(24),
+                                  bottomLeft: Radius.circular(0),
+                                  bottomRight: Radius.circular(24),
+                                ),
+                              ),
+                              backgroundColor: AppColors.blueSky,
+                            ),
+                            child: const Text(
+                              'Aceptar',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
-                        child: const Text(
-                          'Aceptar',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
+                      ],
+                    ),
+                    Positioned(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(top: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(20),
+                              ),
+                            ),
+                            width: 24,
+                            height: 24,
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
             ),
+
             SizedBox(height: 50),
           ],
         ),

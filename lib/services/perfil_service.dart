@@ -45,7 +45,7 @@ class PerfilService {
 
   // // Actualizar foto de perfil
   Future<bool> cargarImagenPerfil(String email, XFile imagen) async {
-    String apiUrl = "https://farma.staweno.com/update_profile_picture.php";
+    String apiUrl = "https://helfer.flatzi.com/app/update_profile_picture.php";
 
     var request = http.MultipartRequest("POST", Uri.parse(apiUrl));
     request.fields["email"] = email;

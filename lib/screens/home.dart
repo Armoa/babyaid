@@ -5,7 +5,6 @@ import 'package:helfer/model/colors.dart';
 import 'package:helfer/model/servicios.dart';
 import 'package:helfer/provider/auth_provider.dart' as local_auth_provider;
 import 'package:helfer/screens/care_screen.dart';
-import 'package:helfer/screens/detalles_servicios.dart';
 import 'package:helfer/screens/estado_cuenta.dart';
 import 'package:helfer/screens/kids_screen.dart';
 import 'package:helfer/screens/mis_servicios.dart';
@@ -136,34 +135,34 @@ class _MyHomePageState extends State<MyHomePage> {
             showUnselectedLabels: false,
             items: [
               BottomNavigationBarItem(
-                icon: Image.asset('assets/icons/home.png', scale: 2.5),
+                icon: Image.asset('assets/icons/home.png', scale: 3),
                 activeIcon: Image.asset(
                   'assets/icons/home-active.png',
-                  scale: 2.5,
+                  scale: 3,
                 ),
                 label: '',
               ),
               BottomNavigationBarItem(
-                icon: Image.asset('assets/icons/list.png', scale: 2.5),
+                icon: Image.asset('assets/icons/list.png', scale: 3),
                 activeIcon: Image.asset(
                   'assets/icons/list-active.png',
-                  scale: 2.5,
+                  scale: 3,
                 ),
                 label: '',
               ),
               BottomNavigationBarItem(
-                icon: Image.asset('assets/icons/pay.png', scale: 2.5),
+                icon: Image.asset('assets/icons/pay.png', scale: 3),
                 activeIcon: Image.asset(
                   'assets/icons/pay-active.png',
-                  scale: 2.5,
+                  scale: 3,
                 ),
                 label: '',
               ),
               BottomNavigationBarItem(
-                icon: Image.asset('assets/icons/user.png', scale: 2.5),
+                icon: Image.asset('assets/icons/user.png', scale: 3),
                 activeIcon: Image.asset(
                   'assets/icons/user-active.png',
-                  scale: 2.5,
+                  scale: 3,
                 ),
                 label: '',
               ),
@@ -293,18 +292,6 @@ class HomeMain extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: builder),
-                      );
-                    } else {
-                      // Fallback si no se encuentra
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) => DetalleServicio(
-                                id: servicioBase.id,
-                                nombre: servicioBase.nombre,
-                              ),
-                        ),
                       );
                     }
                   },

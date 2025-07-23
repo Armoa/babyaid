@@ -99,9 +99,22 @@ class MapaScreenState extends State<MapaScreen> {
         ),
         children: [
           TileLayer(
-            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            subdomains: const ['a', 'b', 'c'],
+            urlTemplate:
+                'https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiYXJtb2EiLCJhIjoiY2wzd2lta2RvMDJnYjNsbnhoc3JvcXBibiJ9.PVMSz2_hBAH76Uvq714spw',
+            additionalOptions: {
+              'access_token':
+                  'pk.eyJ1IjoiYXJtb2EiLCJhIjoiY2wzd2lta2RvMDJnYjNsbnhoc3JvcXBibiJ9.PVMSz2_hBAH76Uvq714spw',
+            },
+            tileProvider: NetworkTileProvider(),
           ),
+          // TileLayer(
+          //   urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          //   subdomains: const ['a', 'b', 'c'],
+          //   additionalOptions: {
+          //     'User-Agent':
+          //         'FlutterMapApp/1.0 (armanet@gmail.com)', // Reemplazá con tu correo o info de contacto
+          //   },
+          // ),
           MarkerLayer(
             markers: [
               Marker(

@@ -126,7 +126,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
                         decoration: BoxDecoration(
@@ -171,7 +171,10 @@ class ProfileScreenState extends State<ProfileScreen> {
                         ),
 
                         onPressed: () => seleccionarYSubirImagen(context),
-                        child: const Text('Cambiar imagen'),
+                        child: const Text(
+                          'Actualizar foto',
+                          style: TextStyle(fontSize: 12),
+                        ),
                       ),
                     ],
                   ),
@@ -333,7 +336,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),

@@ -6,7 +6,6 @@ import 'package:helfer/provider/cupon_provider.dart';
 import 'package:helfer/provider/notificaciones_provider.dart';
 import 'package:helfer/provider/payment_provider.dart';
 import 'package:helfer/provider/theme.dart';
-import 'package:helfer/provider/wishlist_provider.dart';
 import 'package:helfer/screens/home.dart';
 import 'package:helfer/screens/login.dart';
 import 'package:helfer/services/firebase_messaging_service.dart';
@@ -35,7 +34,6 @@ void main() async {
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
         ChangeNotifierProvider(create: (context) => NotificacionesProvider()),
-        ChangeNotifierProvider(create: (context) => WishlistProvider()),
         ChangeNotifierProvider(create: (context) => PaymentProvider()),
         ChangeNotifierProvider(create: (_) => CuponProvider()),
       ],

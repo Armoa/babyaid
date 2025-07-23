@@ -52,7 +52,6 @@ class _MyAcountState extends State<MyAcount> {
     setState(() {
       nombre = datosPerfil?.name;
       photoUrl = datosPerfil?.photo;
-      // _idUser = datosPerfil?.id;
     });
   }
 
@@ -62,8 +61,8 @@ class _MyAcountState extends State<MyAcount> {
       context,
       listen: false,
     );
-    final nombre = authProvider.user?.name ?? 'Usuario';
 
+    final nombre = authProvider.user?.name ?? 'Usuario';
     final photoUrl =
         (authProvider.user?.photo != null &&
                 authProvider.user!.photo.isNotEmpty)
@@ -131,10 +130,7 @@ class _MyAcountState extends State<MyAcount> {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(52.0),
-                        border: Border.all(
-                          color: const Color.fromARGB(255, 253, 226, 229),
-                          width: 2,
-                        ),
+                        border: Border.all(color: AppColors.blueSky, width: 2),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(3),
@@ -168,7 +164,7 @@ class _MyAcountState extends State<MyAcount> {
                           child: Text(
                             nombre,
                             style: const TextStyle(
-                              fontSize: 20,
+                              fontSize: 19,
                               overflow: TextOverflow.ellipsis,
                             ),
                             maxLines: 1,
