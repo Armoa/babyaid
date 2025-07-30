@@ -10,6 +10,10 @@ class AppColors {
   static const Color grayLight = Color.fromARGB(255, 230, 231, 231);
   static const Color grayDark = Color.fromARGB(255, 55, 55, 55);
   static const Color white = Color.fromARGB(255, 255, 255, 255);
+  static const Color green = Color.fromARGB(255, 82, 182, 141);
+  static const Color greenDark = Color.fromARGB(255, 2, 82, 6);
+  static const Color greenLight = Color.fromARGB(255, 215, 247, 232);
+  static const Color greenStandar = Color.fromARGB(255, 50, 186, 120);
 }
 
 List<Color> backgroundColors = [

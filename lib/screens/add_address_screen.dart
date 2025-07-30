@@ -173,7 +173,7 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.blueDark,
+                          backgroundColor: AppColors.green,
                         ),
                         onPressed: () async {
                           if (_validarCampos()) {

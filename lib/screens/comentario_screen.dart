@@ -61,7 +61,6 @@ class ComentarioScreen extends StatelessWidget {
                 ),
                 child: ListView.builder(
                   padding: const EdgeInsets.all(16),
-
                   itemCount: personal.comentarios.length,
                   itemBuilder: (context, index) {
                     final comentarioDestacado = personal.comentarios[index];

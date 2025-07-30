@@ -9,6 +9,7 @@ import 'package:helfer/screens/notification_screen.dart';
 import 'package:helfer/screens/perfil_screen.dart';
 import 'package:helfer/services/logout_user.dart';
 import 'package:helfer/services/obtener_usuario.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -186,7 +187,7 @@ class _MyAcountState extends State<MyAcount> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.blueDark,
+                          backgroundColor: AppColors.green,
                         ),
                         onPressed: () async {
                           await logoutUser(context);
@@ -213,7 +214,7 @@ class _MyAcountState extends State<MyAcount> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.blueSky,
+                          backgroundColor: AppColors.greenDark,
                         ),
                         onPressed: () async {
                           final uri = Uri.parse(
@@ -283,7 +284,7 @@ Widget _widgetBloque1(context) {
           physics: const NeverScrollableScrollPhysics(),
           children: [
             ListTile(
-              leading: const Icon(Icons.person),
+              leading: const Icon(Iconsax.profile_circle_copy),
               title: const Text('Mi Perfil'),
               onTap: () {
                 Navigator.push(
@@ -293,10 +294,10 @@ Widget _widgetBloque1(context) {
                   ),
                 );
               },
-              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+              trailing: const Icon(Iconsax.arrow_right_1_copy),
             ),
             ListTile(
-              leading: const Icon(Icons.place),
+              leading: const Icon(Iconsax.location_copy),
               title: const Text('Direcciones'),
               onTap: () {
                 Navigator.push(
@@ -306,13 +307,13 @@ Widget _widgetBloque1(context) {
                   ),
                 );
               },
-              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+              trailing: const Icon(Iconsax.arrow_right_1_copy),
             ),
             ListTile(
-              leading: const Icon(Icons.list),
+              leading: const Icon(Iconsax.stickynote_copy),
               title: const Text('Mis Facturas'),
               onTap: () {},
-              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+              trailing: const Icon(Iconsax.arrow_right_1_copy),
             ),
           ],
         ),
@@ -333,7 +334,7 @@ Widget _widgetBloque2(BuildContext context) {
           physics: const NeverScrollableScrollPhysics(),
           children: [
             ListTile(
-              leading: const Icon(Icons.notifications),
+              leading: const Icon(Iconsax.notification_bing_copy),
               title: const Text(
                 'Alertas y notificaciones',
                 style: TextStyle(fontSize: 14),
@@ -346,19 +347,11 @@ Widget _widgetBloque2(BuildContext context) {
                   ),
                 );
               },
-              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+              trailing: const Icon(Iconsax.arrow_right_1_copy),
             ),
+
             ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text(
-                'Información del servicio',
-                style: TextStyle(fontSize: 14),
-              ),
-              onTap: () {},
-              trailing: const Icon(Icons.arrow_forward_ios_outlined),
-            ),
-            ListTile(
-              leading: const Icon(Icons.hotel_class_sharp),
+              leading: const Icon(Iconsax.star_copy),
               title: const Text(
                 'Los mejores Helfer',
                 style: TextStyle(fontSize: 14),
@@ -371,7 +364,7 @@ Widget _widgetBloque2(BuildContext context) {
                   ),
                 );
               },
-              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+              trailing: const Icon(Iconsax.arrow_right_1_copy),
             ),
           ],
         ),
@@ -393,40 +386,40 @@ Widget _widgetBloque3(BuildContext context) {
           physics: const NeverScrollableScrollPhysics(),
           children: [
             ListTile(
-              leading: const Icon(Icons.question_mark),
+              leading: const Icon(Iconsax.message_question_copy),
               title: const Text(
                 'Preguntas frecuentes',
                 style: TextStyle(fontSize: 14),
               ),
               onTap: () {},
-              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+              trailing: const Icon(Iconsax.arrow_right_1_copy),
             ),
             ListTile(
-              leading: const Icon(Icons.verified),
+              leading: const Icon(Iconsax.verify_copy),
               title: const Text(
                 'Política de calidad',
                 style: TextStyle(fontSize: 14),
               ),
               onTap: () {},
-              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+              trailing: const Icon(Iconsax.arrow_right_1_copy),
             ),
             ListTile(
-              leading: const Icon(Icons.privacy_tip),
+              leading: const Icon(Iconsax.security_copy),
               title: const Text(
                 'Política de privacidad',
                 style: TextStyle(fontSize: 14),
               ),
               onTap: () {},
-              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+              trailing: const Icon(Iconsax.arrow_right_1_copy),
             ),
             ListTile(
-              leading: const Icon(Icons.error_outline_sharp),
+              leading: const Icon(Iconsax.info_circle_copy),
               title: const Text(
                 'Términos y condiciones',
                 style: TextStyle(fontSize: 14),
               ),
               onTap: () {},
-              trailing: const Icon(Icons.arrow_forward_ios_outlined),
+              trailing: const Icon(Iconsax.arrow_right_1_copy),
             ),
           ],
         ),

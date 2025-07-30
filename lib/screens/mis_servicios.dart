@@ -1,12 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:helfer/model/colors.dart';
+import 'package:helfer/model/personal_model.dart';
 import 'package:helfer/provider/auth_provider.dart' as local_auth_provider;
 import 'package:helfer/provider/auth_provider.dart';
 import 'package:helfer/screens/home.dart';
+import 'package:helfer/screens/perfil_personal_screen2.dart';
 import 'package:helfer/services/fetch_order_detalles.dart';
 import 'package:helfer/services/functions.dart';
 import 'package:helfer/services/get_calificacion.dart';
+import 'package:http/http.dart' as http;
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +24,40 @@ extension StringExtension on String {
   }
 }
 
+// Definir reseñas sugeridas
+final Map<int, List<String>> resenasSugeridas = {
+  1: [
+    'Llegó tarde el personal.',
+    'No quedó muy limpio los muebles.',
+    'El personal no coincide con el perfil mostrado.',
+    'Haré mi propia reseña.',
+  ],
+  2: [
+    'Llegó tarde el personal.',
+    'No quedó muy limpio los muebles.',
+    'El personal no coincide con el perfil mostrado.',
+    'Haré mi propia reseña.',
+  ],
+  3: [
+    'Llegó tarde el personal.',
+    'No quedó muy limpio los muebles.',
+    'El personal no coincide con el perfil mostrado.',
+    'Haré mi propia reseña.',
+  ],
+  4: [
+    'Buen servicio, pero podría mejorar la puntualidad.',
+    'El personal fue amable y cumplidor.',
+    'El resultado fue satisfactorio.',
+    'Haré mi propia reseña.',
+  ],
+  5: [
+    'Excelente atención y resultados impecables.',
+    'Muy profesional y puntual.',
+    'Recomendaría al personal sin dudas.',
+    'Haré mi propia reseña.',
+  ],
+};
+
 class MisServicios extends StatefulWidget {
   const MisServicios({super.key});
 
@@ -26,6 +66,24 @@ class MisServicios extends StatefulWidget {
 }
 
 class _MisServiciosState extends State<MisServicios> {
+  List<PersonalCalificado> lista = [];
+
+  // Supongamos que tienes un método que obtiene PersonalModel por ID
+  Future<PersonalModel?> fetchPersonalModel(int id) async {
+    final url = Uri.parse(
+      'https://helfer.flatzi.com/app/personal_datos.php?id=$id',
+    );
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonBody = json.decode(response.body);
+      if (jsonBody['success'] == true && jsonBody['data'] != null) {
+        return PersonalModel.fromJson(jsonBody['data']);
+      }
+    }
+    return null;
+  }
+
   Map<int, double?> promedioPorPersonal = {};
   double? promedioCalificacion;
 
@@ -36,20 +94,18 @@ class _MisServiciosState extends State<MisServicios> {
   // Mapeo de estados internos a nombres de visualización para los botones
   final Map<String, String> _statusDisplayNames = {
     'agendado': 'Agendados',
-    'recurrente': 'Recurrentes',
     'activo': 'Activos',
     'finalizado': 'Finalizados',
     'cancelado': 'Cancelados',
+    'recurrente': 'Recurrentes',
   };
 
   Map<String, Color> orderStatusColors = {
     'agendado': Colors.orange, // Pendiente
-    'recurrente': Colors.blue, // En proceso
     'activo': Colors.teal, // En espera
     'finalizado': Colors.green, // Completado
     'cancelado': Colors.red, // Cancelado
-    // 'refunded': Colors.purple, // Reembolsado
-    // 'failed': Colors.grey, // Fallido
+    'recurrente': Colors.blue, // En proceso
   };
   Color getStatusColor(String status) {
     return orderStatusColors[status] ?? Colors.black; // Color predeterminado
@@ -61,7 +117,21 @@ class _MisServiciosState extends State<MisServicios> {
   @override
   void initState() {
     super.initState();
+    cargarPersonales();
     _setup();
+  }
+
+  // CARGA DE PERSONAL
+  Future<void> cargarPersonales() async {
+    final response = await http.get(
+      Uri.parse('https://helfer.flatzi.com/app/get_ranking.php'),
+    );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as List;
+      setState(() {
+        lista = data.map((e) => PersonalCalificado.fromJson(e)).toList();
+      });
+    }
   }
 
   void _setup() async {
@@ -74,14 +144,25 @@ class _MisServiciosState extends State<MisServicios> {
         _orderDetallesFuture = fetchOrderDetalles(id);
       });
     } else {
-      print("⚠️ El ID de usuario aún no está disponible");
+      print("El ID de usuario aún no está disponible");
     }
+  }
+
+  // funcion consultar siya fue calificado
+  Future<bool> yaCalificado(int idReserva) async {
+    final response = await http.get(
+      Uri.parse(
+        'https://helfer.flatzi.com/verificar_calificacion.php?id_reserva=$idReserva',
+      ),
+    );
+    final data = jsonDecode(response.body);
+    return data['success'] == true && data['calificado'] == true;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blueDark,
+      backgroundColor: AppColors.green,
       appBar: AppBar(
         toolbarHeight: 120,
         title: Column(
@@ -110,7 +191,7 @@ class _MisServiciosState extends State<MisServicios> {
             ),
             SizedBox(height: 25),
             Text(
-              "Mis servicios $userId",
+              "Mis servicios",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
 
@@ -136,13 +217,7 @@ class _MisServiciosState extends State<MisServicios> {
               } else if (snapshot.hasError) {
                 return Center(child: Text("Error: ${snapshot.error}"));
               } else {
-                // Siempre construye el CustomScrollView para que los botones sean visibles
-                // independientemente del estado de los datos.
-
-                // Obtén los datos (vacíos si no hay, o los reales)
                 final allDetalles = snapshot.data ?? [];
-
-                // Filtra la lista de OrderDetalle según el estado seleccionado
                 final filteredDetalles =
                     allDetalles.where((detalle) {
                       return detalle.order.status == _selectedStatus;
@@ -165,12 +240,10 @@ class _MisServiciosState extends State<MisServicios> {
                         ),
                       ),
                     ),
-
-                    // Sliver para los botones de estado (SIEMPRE VISIBLE)
                     SliverToBoxAdapter(
                       child: Card(
                         child: Container(
-                          height: 60, // Altura para la fila de botones
+                          height: 60,
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
@@ -192,18 +265,17 @@ class _MisServiciosState extends State<MisServicios> {
                                     if (selected) {
                                       setState(() {
                                         _selectedStatus = statusKey;
-                                        _tileActivo =
-                                            null; // Cierra cualquier ExpansionTile abierto
+                                        _tileActivo = null;
                                       });
                                     }
                                   },
                                   checkmarkColor: Colors.white,
-                                  selectedColor: AppColors.blueDark,
+                                  selectedColor: AppColors.greenDark,
                                   labelStyle: TextStyle(
                                     color:
                                         _selectedStatus == statusKey
                                             ? Colors.white
-                                            : AppColors.blueDark,
+                                            : AppColors.greenDark,
                                   ),
                                 ),
                               );
@@ -213,8 +285,6 @@ class _MisServiciosState extends State<MisServicios> {
                       ),
                     ),
                     SliverToBoxAdapter(child: SizedBox(height: 10)),
-
-                    // Aquí manejamos si hay datos filtrados o si mostramos el mensaje
                     if (filteredDetalles.isNotEmpty)
                       SliverList(
                         delegate: SliverChildBuilderDelegate((
@@ -225,7 +295,6 @@ class _MisServiciosState extends State<MisServicios> {
                           final order = detalle.order;
                           final personal = detalle.personal;
                           final idPersonal = personal.id;
-
                           final promedio = promedioPorPersonal[idPersonal];
 
                           if (!promedioPorPersonal.containsKey(idPersonal)) {
@@ -290,56 +359,132 @@ class _MisServiciosState extends State<MisServicios> {
                                       ),
                               trailing:
                                   order.status == 'finalizado'
-                                      ? ElevatedButton(
-                                        onPressed:
-                                            () => mostrarPopupCalificacion(
-                                              context,
-                                              idReserva: order.id,
-                                              idPersonal: personal.id,
-                                            ),
-                                        style: ElevatedButton.styleFrom(
-                                          elevation: 0,
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 8,
-                                          ),
-                                          backgroundColor:
-                                              Colors
-                                                  .amber, // Color de botón personalizado
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          'Calificar',
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      )
-                                      : Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: getStatusColor(order.status),
-                                          borderRadius: BorderRadius.circular(
-                                            14,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          order.status,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 10,
-                                          ),
-                                        ),
-                                      ),
+                                      ? FutureBuilder<bool>(
+                                        future: yaCalificado(order.id),
+                                        builder: (context, snapshot) {
+                                          if (!snapshot.hasData) {
+                                            return const SizedBox.shrink(); // spinner si querés
+                                          }
 
+                                          final fueCalificado = snapshot.data!;
+                                          return ElevatedButton(
+                                            onPressed:
+                                                fueCalificado
+                                                    ? null
+                                                    : () => mostrarPopupCalificacion(
+                                                      context,
+                                                      idReserva: order.id,
+                                                      idPersonal:
+                                                          personal
+                                                              .id, // ¡Aquí usamos personal.id!
+                                                    ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  fueCalificado
+                                                      ? Colors.grey
+                                                      : Colors.amber,
+                                              elevation: 0,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 8,
+                                                  ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(14),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              fueCalificado
+                                                  ? 'Calificado'
+                                                  : 'Calificar',
+                                              style: const TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                      : (order.status == 'agendado'
+                                          ? Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: getStatusColor(
+                                                order.status,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                            ),
+                                            child: GestureDetector(
+                                              onTap: () async {
+                                                final personalModel =
+                                                    await fetchPersonalModel(
+                                                      personal.id,
+                                                    );
+                                                if (personalModel == null) {
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                        'No se pudo cargar el perfil',
+                                                      ),
+                                                    ),
+                                                  );
+                                                  return;
+                                                }
+                                                final double? promedio =
+                                                    promedioPorPersonal[personal
+                                                        .id];
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (
+                                                          _,
+                                                        ) => PerfilPersonalScreen2(
+                                                          personalModel:
+                                                              personalModel, // Pasas el PersonalModel
+                                                          promedioCalificacion:
+                                                              promedio, // <-- ¡Pasas el promedio aquí!
+                                                        ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Text(
+                                                'Ver perfil',
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                          : Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: getStatusColor(
+                                                order.status,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                            ),
+                                            child: Text(
+                                              _statusDisplayNames[order
+                                                  .status]!,
+                                              style: const TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          )),
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(12),
@@ -348,17 +493,57 @@ class _MisServiciosState extends State<MisServicios> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       const SizedBox(height: 4),
-                                      Text(
-                                        'Fecha de solicitud: ${DateFormat('EEEE d MMMM y', 'es_PY').format(DateTime.parse(order.createdAt)).toString().capitalizeFirst()}',
+
+                                      Row(
+                                        children: [
+                                          Icon(Iconsax.calendar_copy),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            'Solicitud: ${DateFormat('EEEE d MMMM y', 'es_PY').format(DateTime.parse(order.createdAt)).toString().capitalizeFirst()}',
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        'Fecha de servicio: ${DateFormat('EEEE d MMMM y', 'es_PY').format(DateTime.parse(order.fechaServicio)).toString().capitalizeFirst()}',
+                                      SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Icon(Iconsax.calendar),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            DateFormat('EEEE d MMMM y', 'es_PY')
+                                                .format(
+                                                  DateTime.parse(
+                                                    order.fechaServicio,
+                                                  ),
+                                                )
+                                                .toString()
+                                                .capitalizeFirst(),
+                                          ),
+                                        ],
                                       ),
-                                      Text('Horario: ${order.horarioRango}'),
-                                      Text(
-                                        'Frecuencia: ${order.frecuenciaServicio}',
+                                      SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Icon(Iconsax.clock_copy),
+                                          SizedBox(width: 8),
+                                          Text(order.horarioRango),
+                                        ],
                                       ),
-                                      Text('Paquete: ${order.paqueteHoras}'),
+                                      SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Icon(Iconsax.rotate_left_copy),
+                                          SizedBox(width: 8),
+                                          Text(order.frecuenciaServicio),
+                                        ],
+                                      ),
+                                      SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Icon(Iconsax.box_copy),
+                                          SizedBox(width: 8),
+                                          Text('${order.paqueteHoras}  Horas.'),
+                                        ],
+                                      ),
                                       const Divider(height: 16),
                                       Text(
                                         'Personal asignado:',
@@ -366,16 +551,37 @@ class _MisServiciosState extends State<MisServicios> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      Text(
-                                        '${personal.nombre} ${personal.apellido}',
+                                      SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Icon(Iconsax.user_copy),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            '${personal.nombre} ${personal.apellido}',
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        promedio != null
-                                            ? '${promedio.toStringAsFixed(1)} ⭐'
-                                            : 'Sin calificación',
+                                      SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Icon(Iconsax.ranking_1_copy),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            promedio != null
+                                                ? '${promedio.toStringAsFixed(1)} ⭐'
+                                                : 'Sin calificación',
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        'Antigüedad: ${personal.antiguedad} años',
+                                      SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Icon(Iconsax.broom_copy),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            '${personal.antiguedad} servicos realizados',
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -398,7 +604,7 @@ class _MisServiciosState extends State<MisServicios> {
                                 padding: const EdgeInsets.all(10),
                                 child: Image.asset(
                                   'assets/box-pedidos.png',
-                                  scale: 1.7,
+                                  scale: 1.2,
                                 ),
                               ),
                               Text(
@@ -425,6 +631,119 @@ class _MisServiciosState extends State<MisServicios> {
   }
 }
 
+// **Función para mostrar el campo de comentario ahora es independiente**
+Future<bool> _mostrarCampoComentario(
+  BuildContext context,
+
+  TextEditingController controller,
+) async {
+  final result = await showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true, // Para ajustar cuando el teclado aparezca
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    backgroundColor: AppColors.white,
+    builder: (BuildContext bc) {
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(bc).viewInsets.bottom,
+          left: 16.0,
+          right: 16.0,
+          top: 16.0,
+        ),
+        child: Stack(
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      child: IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        color: Colors.grey[800],
+                        iconSize: 26,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    const Text(
+                      'Deja tu comentario',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: controller,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    hintText: 'Haz tu reseña aquí...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: AppColors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide.none,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text(
+                          'Guardar',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(
+                            context,
+                            controller.text,
+                          ); // Devuelve el texto
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 60),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
+
+  // Puedes hacer algo con el resultado si es necesario, por ejemplo mostrar un snackbar
+  if (result != null && result.isNotEmpty) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Comentario guardado: "$result"')));
+  }
+
+  // Devuelve true si el resultado no es nulo y no está vacío, indicando que se cargó un comentario.
+  return result != null && result.isNotEmpty;
+}
+
 void mostrarPopupCalificacion(
   BuildContext context, {
   required int idReserva,
@@ -432,119 +751,388 @@ void mostrarPopupCalificacion(
 }) {
   int calificacion = 0;
   TextEditingController comentarioController = TextEditingController();
+  // Estado para las sugerencias seleccionadas
+  List<String> _selectedSugerencias = [];
+  // --- NUEVO ESTADO: Para saber si el comentario ha sido cargado ---
+  bool _comentarioCargado = false; // Inicialmente false
 
-  showDialog(
+  // Función auxiliar para obtener el texto de la calificación
+  String getCalificacionText(int calificacion) {
+    switch (calificacion) {
+      case 1:
+        return "Fatal";
+      case 2:
+        return "Aceptable";
+      case 3:
+        return "Bueno";
+      case 4:
+        return "Muy Bueno";
+      case 5:
+        return "¡Excelente!";
+      default:
+        return "";
+    }
+  }
+
+  // Define las sugerencias aquí
+  List<String> getSugerenciasPorCalificacion(int calificacion) {
+    if (calificacion <= 3) {
+      return [
+        'Llegó tarde',
+        'No quedó muy limpio',
+        'Desatento',
+        'Descuidado',
+        'El personal no coincide',
+      ];
+    } else {
+      return [
+        'Excelente atención',
+        'Puntual',
+        'Atento',
+        'Fino Cluidado',
+        'Recomendado',
+      ];
+    }
+  }
+
+  showModalBottomSheet(
     context: context,
-    builder:
-        (_) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text(
-            'Calificá tu experiencia',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // ⭐ Selector de estrellas
-              StatefulBuilder(
-                builder:
-                    (context, setState) => Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(5, (index) {
-                        return IconButton(
-                          iconSize: 32,
-                          icon: Icon(
-                            index < calificacion
-                                ? Icons.star
-                                : Icons.star_border_outlined,
-                            color: Colors.amber,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    backgroundColor: AppColors.white,
+
+    builder: (BuildContext bc) {
+      // Usamos StatefulBuilder para manejar el estado interno del bottom sheet
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          List<String> currentSugerencias = getSugerenciasPorCalificacion(
+            calificacion,
+          );
+
+          if (comentarioController.text.isNotEmpty && !_comentarioCargado) {
+            _comentarioCargado = true;
+          }
+
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(bc).viewInsets.bottom,
+              left: 16.0,
+              right: 16.0,
+              top: 16.0,
+            ),
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 60),
+                      Center(
+                        child: const Text(
+                          '¿Cómo fue el servicio?',
+                          style: TextStyle(
+                            fontSize: 19,
+                            fontWeight: FontWeight.bold,
                           ),
-                          onPressed: () {
-                            setState(() => calificacion = index + 1);
-                          },
-                        );
-                      }),
-                    ),
-              ),
-              const SizedBox(height: 16),
-              // ✍️ Campo de comentario
-              TextField(
-                controller: comentarioController,
-                maxLines: 3,
-                decoration: InputDecoration(
-                  hintText: '¿Qué te pareció el servicio?',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Cancelar'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.amber,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text('Enviar'),
-              onPressed: () async {
-                final comentario = comentarioController.text.trim();
-
-                // Validaciones
-                if (calificacion == 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Seleccioná al menos 1 estrella'),
-                    ),
-                  );
-                  return;
-                }
-                if (comentario.length < 10) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Comentá al menos 10 caracteres'),
-                    ),
-                  );
-                  return;
-                }
-
-                final resultado = await enviarCalificacion(
-                  idReserva: idReserva,
-                  idPersonal: idPersonal,
-                  calificacion: calificacion,
-                  comentario: comentario,
-                );
-                // 👇 Acá va tu bloque de validación
-                if (resultado['status'] == 'error') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        resultado['message'] ?? 'Error desconocido',
+                        ),
                       ),
-                    ),
-                  );
-                  return; // 💡 Evita continuar si hubo error
-                }
+                      const SizedBox(height: 20),
+                      // ⭐ Selector de estrellas y texto descriptivo
+                      Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(5, (index) {
+                              return IconButton(
+                                iconSize: 44,
+                                icon: Image.asset(
+                                  index < calificacion
+                                      ? 'assets/star.png'
+                                      : 'assets/star_line.png',
+                                  width: 44,
+                                  height: 44,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    calificacion = index + 1;
+                                    // Limpiar sugerencias seleccionadas al cambiar calificación
+                                    _selectedSugerencias.clear();
+                                  });
+                                  // No llamar a mostrarSugerencias aquí, ya se mostrarán dinámicamente
+                                },
+                              );
+                            }),
+                          ),
+                          SizedBox(height: 10),
+                          if (calificacion > 0)
+                            Text(
+                              getCalificacionText(calificacion),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          const SizedBox(height: 20),
+                          if (calificacion > 0)
+                            Divider(
+                              height: 20,
+                              thickness: 1, // Grosor de la línea
+                              indent: 20, // Margen izquierdo
+                              endIndent: 20, // Margen derecho
+                              color: Colors.grey[400],
+                            ),
+                          const SizedBox(height: 20),
+                          if (calificacion > 0)
+                            Text(
+                              "¿Quieres añadir algún comentario?",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          SizedBox(height: 20),
+                        ],
+                      ),
+                      // --- NUEVO: Chips de sugerencias ---
+                      if (calificacion >
+                          0) // Muestra las sugerencias solo si hay calificación
+                        Align(
+                          alignment: Alignment.center,
+                          child: Wrap(
+                            spacing: 8.0, // Espacio entre los chips
+                            runSpacing: 8.0, // Espacio entre las filas de chips
+                            alignment: WrapAlignment.center,
+                            children: [
+                              ...currentSugerencias.map((sugerencia) {
+                                final isSelected = _selectedSugerencias
+                                    .contains(sugerencia);
+                                return ActionChip(
+                                  label: Text(
+                                    sugerencia,
+                                    style: TextStyle(
+                                      color:
+                                          isSelected
+                                              ? AppColors.greenStandar
+                                              : AppColors.grayDark,
+                                    ),
+                                  ),
+                                  backgroundColor:
+                                      isSelected
+                                          ? AppColors.greenLight
+                                          : Colors.grey[100],
+                                  side: BorderSide(
+                                    width: 2,
+                                    color:
+                                        isSelected
+                                            ? AppColors.greenStandar
+                                            : Colors.transparent,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      if (isSelected) {
+                                        _selectedSugerencias.remove(sugerencia);
+                                      } else {
+                                        _selectedSugerencias.add(sugerencia);
+                                      }
+                                    });
+                                  },
+                                );
+                              }).toList(),
+                              // Botón "Deja un comentario" como un chip
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ActionChip(
+                                    avatar: Icon(
+                                      Icons.edit,
+                                      size: 18,
+                                      color:
+                                          _comentarioCargado
+                                              ? AppColors.greenStandar
+                                              : AppColors
+                                                  .grayDark, // Color del icono
+                                    ),
+                                    label: Text(
+                                      'Deja un comentario',
+                                      style: TextStyle(
+                                        color:
+                                            _comentarioCargado
+                                                ? AppColors.greenStandar
+                                                : AppColors
+                                                    .grayDark, // Color del texto
+                                      ),
+                                    ),
+                                    backgroundColor:
+                                        _comentarioCargado
+                                            ? AppColors.greenLight
+                                            : AppColors
+                                                .grayLight, // Color de fondo
+                                    side: BorderSide(
+                                      width: 2,
+                                      color:
+                                          _comentarioCargado
+                                              ? AppColors.greenStandar
+                                              : Colors
+                                                  .transparent, // Color del borde
+                                    ),
+                                    onPressed: () async {
+                                      // Captura el resultado de _mostrarCampoComentario
+                                      final bool comentarioGuardado =
+                                          await _mostrarCampoComentario(
+                                            context,
+                                            comentarioController,
+                                          );
+                                      setState(() {
+                                        _comentarioCargado = comentarioGuardado;
+                                        // Si el comentario se eliminó (quedó vacío), también resetear el estado
+                                        if (comentarioController.text.isEmpty) {
+                                          _comentarioCargado = false;
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      // ------------------------------------
+                      const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: AppColors.green,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  side: BorderSide.none,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 14,
+                                ),
+                              ),
+                              child: const Text(
+                                'Listo',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              onPressed: () async {
+                                final comentario =
+                                    comentarioController.text.trim();
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(resultado['message'] ?? 'Error al calificar'),
+                                // Validaciones
+                                if (calificacion == 0) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Seleccioná al menos 1 estrella',
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                // if (comentario.length < 10) {
+                                //   ScaffoldMessenger.of(context).showSnackBar(
+                                //     const SnackBar(
+                                //       content: Text(
+                                //         'Comentá al menos 10 caracteres',
+                                //       ),
+                                //     ),
+                                //   );
+                                //   return;
+                                // }
+
+                                final resultado = await enviarCalificacion(
+                                  idReserva: idReserva,
+                                  idPersonal: idPersonal,
+                                  calificacion: calificacion,
+                                  comentario: comentario,
+                                  sugerenciasSeleccionadas:
+                                      _selectedSugerencias,
+                                );
+                                // 👇 Acá va tu bloque de validación
+                                if (resultado['status'] == 'error') {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        resultado['message'] ??
+                                            'Error desconocido',
+                                      ),
+                                    ),
+                                  );
+                                  return; // 💡 Evita continuar si hubo error
+                                }
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      resultado['message'] ??
+                                          'Error al calificar',
+                                    ),
+                                  ),
+                                );
+
+                                await Future.delayed(
+                                  const Duration(milliseconds: 500),
+                                );
+                                Navigator.pop(
+                                  context,
+                                ); // Cierra el bottom sheet
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 70),
+                    ],
                   ),
-                );
-
-                await Future.delayed(const Duration(milliseconds: 500));
-                Navigator.pop(context); // Cierra el popup
-              },
+                ),
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white, // Fondo blanco
+                      shape: BoxShape.circle, // Forma circular para el botón
+                      boxShadow: [
+                        // Sombra
+                        BoxShadow(
+                          color: const Color.fromARGB(22, 0, 0, 0),
+                          spreadRadius: 2, // Cuánto se extiende la sombra
+                          blurRadius: 2, // Qué tan difuminada está la sombra
+                          offset: const Offset(
+                            0,
+                            0,
+                          ), // Desplazamiento de la sombra (eje X, Y)
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      color: Colors.grey[800],
+                      iconSize: 26,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
+      );
+    },
   );
 }

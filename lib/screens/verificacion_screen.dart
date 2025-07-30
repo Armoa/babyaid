@@ -137,7 +137,7 @@ class _VerificacionScreenState extends State<VerificacionScreen> {
                   Expanded(
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.blueDark,
+                        backgroundColor: AppColors.green,
                       ),
                       onPressed: _validando ? null : verificarCodigo,
                       icon: Icon(Icons.check, color: Colors.white),

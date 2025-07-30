@@ -7,7 +7,7 @@ class CareScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blueDark,
+      backgroundColor: AppColors.green,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: null,

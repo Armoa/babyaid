@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
+import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
 import 'package:helfer/model/colors.dart';
 import 'package:helfer/model/servicios.dart';
@@ -14,6 +16,7 @@ import 'package:helfer/screens/selector_ubicacion.dart';
 import 'package:helfer/screens/show_promo_banner.dart';
 import 'package:helfer/services/fetch_active_banner.dart';
 import 'package:helfer/services/verificar_perfil_usuario.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -105,6 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: IndexedStack(
         index: Seccion.values.indexOf(_seccionActual),
         children: [
@@ -118,56 +122,41 @@ class _MyHomePageState extends State<MyHomePage> {
           const MyAcount(),
         ],
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(color: Colors.white),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
-          child: BottomNavigationBar(
-            backgroundColor: const Color.fromARGB(255, 245, 245, 245),
-            type: BottomNavigationBarType.fixed,
-            currentIndex: Seccion.values.indexOf(_seccionActual),
-            onTap: (index) => _navegarA(Seccion.values[index]),
-            selectedItemColor: AppColors.blueSky, // Color activo
-            unselectedItemColor: Colors.grey,
-            showUnselectedLabels: false,
-            items: [
-              BottomNavigationBarItem(
-                icon: Image.asset('assets/icons/home.png', scale: 3),
-                activeIcon: Image.asset(
-                  'assets/icons/home-active.png',
-                  scale: 3,
-                ),
-                label: '',
+
+      bottomNavigationBar: SafeArea(
+        child: CurvedNavigationBar(
+          index: Seccion.values.indexOf(_seccionActual),
+          items: [
+            CurvedNavigationBarItem(
+              child: Icon(Iconsax.home_copy, color: Colors.white, size: 30),
+            ),
+            CurvedNavigationBarItem(
+              child: Icon(
+                Iconsax.task_square_copy,
+                color: Colors.white,
+                size: 30,
               ),
-              BottomNavigationBarItem(
-                icon: Image.asset('assets/icons/list.png', scale: 3),
-                activeIcon: Image.asset(
-                  'assets/icons/list-active.png',
-                  scale: 3,
-                ),
-                label: '',
+            ),
+            CurvedNavigationBarItem(
+              child: Icon(Iconsax.wallet_1_copy, color: Colors.white, size: 30),
+            ),
+            CurvedNavigationBarItem(
+              // child: Icon(Icons.person, color: Colors.white, size: 30),
+              child: Icon(
+                Iconsax.profile_circle_copy,
+                color: Colors.white,
+                size: 30,
               ),
-              BottomNavigationBarItem(
-                icon: Image.asset('assets/icons/pay.png', scale: 3),
-                activeIcon: Image.asset(
-                  'assets/icons/pay-active.png',
-                  scale: 3,
-                ),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: Image.asset('assets/icons/user.png', scale: 3),
-                activeIcon: Image.asset(
-                  'assets/icons/user-active.png',
-                  scale: 3,
-                ),
-                label: '',
-              ),
-            ],
-          ),
+            ),
+          ],
+          color: AppColors.green,
+          buttonBackgroundColor: AppColors.greenDark,
+          backgroundColor: Colors.white,
+
+          animationCurve: Curves.easeInOut,
+          animationDuration: Duration(milliseconds: 600),
+          onTap: (index) => _navegarA(Seccion.values[index]),
+          letIndexChange: (index) => true,
         ),
       ),
     );
@@ -195,7 +184,7 @@ class HomeMainScreen extends StatelessWidget {
     final nombre = authProvider.user?.name ?? 'Usuario';
 
     return Scaffold(
-      backgroundColor: AppColors.blueDark,
+      backgroundColor: AppColors.green,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: null,

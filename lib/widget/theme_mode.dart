@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:helfer/model/colors.dart';
 
 ThemeData lightTheme = ThemeData(
-  scaffoldBackgroundColor: AppColors.blueDark,
+  scaffoldBackgroundColor: AppColors.green,
   brightness: Brightness.light,
   appBarTheme: AppBarTheme(
     elevation: 0.0,
-    backgroundColor: AppColors.blueDark,
+    backgroundColor: AppColors.green,
     surfaceTintColor: Colors.transparent,
     toolbarHeight: 80,
     centerTitle: true,
     titleTextStyle: TextStyle(color: AppColors.grayLight, fontSize: 20),
     iconTheme: IconThemeData(color: Colors.white),
   ),
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 15, 58, 109),
-  ),
+  colorScheme: ColorScheme.fromSeed(seedColor: AppColors.green),
 );
 
 ThemeData darkTheme = ThemeData(

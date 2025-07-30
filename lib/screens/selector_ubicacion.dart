@@ -8,6 +8,7 @@ import 'package:helfer/services/delete_address.dart';
 import 'package:helfer/services/obtener_usuario.dart';
 import 'package:helfer/services/ubicacion_service.dart';
 import 'package:helfer/services/verificar_datos_faltantes.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 class SelectorUbicacion extends StatefulWidget {
   const SelectorUbicacion({super.key});
@@ -74,7 +75,7 @@ class _SelectorUbicacionState extends State<SelectorUbicacion> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blueDark,
+      backgroundColor: AppColors.green,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: null,
@@ -121,18 +122,17 @@ class _SelectorUbicacionState extends State<SelectorUbicacion> {
                   : Colors.white,
         ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
           child: Column(
             children: [
               const SizedBox(height: 20),
-
               // Botón para Guardar Ubicación
               Row(
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.blueDark,
+                        backgroundColor: AppColors.greenDark,
                         padding: EdgeInsets.all(16),
                       ),
                       onPressed: () {
@@ -144,8 +144,8 @@ class _SelectorUbicacionState extends State<SelectorUbicacion> {
                         );
                       },
                       icon: const Icon(
-                        Icons.add_circle_outline,
-                        size: 26,
+                        Iconsax.add_circle_copy,
+                        size: 28,
                         color: AppColors.white,
                       ),
                       label: const Text(
@@ -179,9 +179,10 @@ class _SelectorUbicacionState extends State<SelectorUbicacion> {
                         final ubicacion = ubicaciones[index];
 
                         return Card(
+                          elevation: 0,
                           margin: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
+                            horizontal: 5,
+                            vertical: 5,
                           ),
                           child: ListTile(
                             onTap: () {
@@ -196,7 +197,7 @@ class _SelectorUbicacionState extends State<SelectorUbicacion> {
                               );
                             },
                             leading: const Icon(
-                              Icons.location_on,
+                              Iconsax.location_copy,
                               color: Colors.blue,
                             ),
                             title: Text(
@@ -207,9 +208,13 @@ class _SelectorUbicacionState extends State<SelectorUbicacion> {
                             ),
                             subtitle: Text(
                               "${ubicacion.callePrincipal}, ${ubicacion.numeracion}",
+                              style: TextStyle(fontSize: 12),
                             ),
                             trailing: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
+                              icon: const Icon(
+                                Iconsax.trash_copy,
+                                color: Colors.red,
+                              ),
                               onPressed: () {
                                 confirmarEliminacion(context, ubicacion);
                               },

@@ -207,7 +207,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.blueDark,
+      backgroundColor: AppColors.green,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: null,
@@ -242,7 +242,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
           ],
         ),
 
-        backgroundColor: AppColors.blueDark,
+        backgroundColor: AppColors.green,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -317,7 +317,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                                 Icon(
                                   Icons.access_time_outlined,
                                   size: 16,
-                                  color: AppColors.blueDark,
+                                  color: AppColors.green,
                                 ),
                                 SizedBox(width: 8),
                                 Text(
@@ -508,7 +508,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                               Expanded(
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.blueDark,
+                                    backgroundColor: AppColors.green,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 12.0,
                                     ),

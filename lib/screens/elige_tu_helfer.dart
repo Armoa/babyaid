@@ -55,7 +55,7 @@ class _ElegirHerferState extends State<ElegirHerfer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blueDark,
+      backgroundColor: AppColors.green,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: null,
@@ -90,7 +90,7 @@ class _ElegirHerferState extends State<ElegirHerfer> {
           ],
         ),
 
-        backgroundColor: AppColors.blueDark,
+        backgroundColor: AppColors.green,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -158,7 +158,7 @@ class _ElegirHerferState extends State<ElegirHerfer> {
         final personal = personalDisponible[index];
 
         return Card(
-          elevation: 3,
+          elevation: 0.5,
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -233,7 +233,7 @@ class _ElegirHerferState extends State<ElegirHerfer> {
                     Icon(
                       Icons.access_time_outlined,
                       size: 16,
-                      color: AppColors.blueDark,
+                      color: AppColors.green,
                     ),
                     SizedBox(width: 8),
                     Text(

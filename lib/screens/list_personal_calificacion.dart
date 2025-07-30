@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:helfer/model/colors.dart';
 import 'package:helfer/model/personal_model.dart';
 import 'package:helfer/screens/comentario_screen.dart';
+import 'package:helfer/screens/perfil_personal_screen.dart';
 import 'package:http/http.dart' as http;
 
 class RankingPersonalScreen extends StatefulWidget {
@@ -32,6 +33,22 @@ class _RankingPersonalScreenState extends State<RankingPersonalScreen> {
         lista = data.map((e) => PersonalCalificado.fromJson(e)).toList();
       });
     }
+  }
+
+  // Supongamos que tienes un método que obtiene PersonalModel por ID
+  Future<PersonalModel?> fetchPersonalModel(int id) async {
+    final url = Uri.parse(
+      'https://helfer.flatzi.com/app/personal_datos.php?id=$id',
+    );
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonBody = json.decode(response.body);
+      if (jsonBody['success'] == true && jsonBody['data'] != null) {
+        return PersonalModel.fromJson(jsonBody['data']);
+      }
+    }
+    return null;
   }
 
   @override
@@ -93,7 +110,10 @@ class _RankingPersonalScreenState extends State<RankingPersonalScreen> {
                     'https://helfer.flatzi.com/img/personal/${p.foto}',
                   ),
                 ),
-                title: Text('${p.nombre} ${p.apellido}'),
+                title: Text(
+                  '${p.nombre} ${p.apellido}',
+                  style: TextStyle(fontSize: 14),
+                ),
                 subtitle: Row(
                   children: List.generate(5, (i) {
                     return Icon(
@@ -103,7 +123,47 @@ class _RankingPersonalScreenState extends State<RankingPersonalScreen> {
                     );
                   }),
                 ),
-                trailing: Text('${p.promedio.toStringAsFixed(1)} ⭐'),
+                trailing: Column(
+                  children: [
+                    Text('${p.promedio.toStringAsFixed(1)} ⭐'),
+
+                    GestureDetector(
+                      onTap: () async {
+                        final personalModel = await fetchPersonalModel(p.id);
+                        if (personalModel == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('No se pudo cargar el perfil'),
+                            ),
+                          );
+                          return;
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => PerfilPersonalScreen(
+                                  personalRating: p,
+                                  personalModel: personalModel,
+                                ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(top: 5),
+                        padding: EdgeInsets.fromLTRB(14, 4, 15, 4),
+                        decoration: BoxDecoration(
+                          color: Colors.amber,
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                        ),
+                        child: Text(
+                          "Ver Perfil",
+                          style: TextStyle(fontSize: 10),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 onTap: () {
                   Navigator.push(
                     context,

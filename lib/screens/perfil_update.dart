@@ -135,7 +135,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
       borderRadius: BorderRadius.circular(16.0),
     );
     return Scaffold(
-      backgroundColor: AppColors.blueDark,
+      backgroundColor: AppColors.green,
       appBar: AppBar(title: const Text("Actualizar perfil")),
       body: Container(
         decoration: const BoxDecoration(
@@ -547,7 +547,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                       Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.blueDark,
+                            backgroundColor: AppColors.green,
                           ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {

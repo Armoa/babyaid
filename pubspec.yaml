@@ -56,6 +56,8 @@ dependencies:
   firebase_app_check: ^0.3.2+5  
   firebase_messaging: ^15.2.5
   onesignal_flutter: ^5.3.0
+  curved_labeled_navigation_bar: ^2.0.6
+  iconsax_flutter: ^1.0.1
 
 dev_dependencies:
   flutter_test:

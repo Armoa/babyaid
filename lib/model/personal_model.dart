@@ -7,7 +7,8 @@ class PersonalModel {
   final int antiguedad;
   final double calificacion;
   final int verificado;
-  // final double distancia;
+  final double distancia;
+  final String mensaje;
   final String horaDesde;
   final String horaHasta;
 
@@ -20,7 +21,8 @@ class PersonalModel {
     required this.antiguedad,
     required this.calificacion,
     required this.verificado,
-    // required this.distancia,
+    required this.distancia,
+    required this.mensaje,
     required this.horaDesde,
     required this.horaHasta,
   });
@@ -36,7 +38,8 @@ class PersonalModel {
       calificacion:
           double.tryParse(json['calificacion']?.toString() ?? '') ?? 0.0,
       verificado: int.tryParse(json['verificado']?.toString() ?? '') ?? 0,
-      // distancia: double.tryParse(json['distancia']?.toString() ?? '') ?? 0.0,
+      distancia: double.tryParse(json['distancia']?.toString() ?? '') ?? 0.0,
+      mensaje: json['mensaje'] ?? '',
       horaDesde: json['hora_desde'] ?? '',
       horaHasta: json['hora_hasta'] ?? '',
     );

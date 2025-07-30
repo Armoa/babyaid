@@ -61,7 +61,7 @@ class _EstadoCuentaState extends State<EstadoCuenta> {
         _orderDetallesFuture = fetchOrderDetalles(id);
       });
     } else {
-      print("⚠️ El ID de usuario aún no está disponible");
+      print("El ID de usuario aún no está disponible");
     }
   }
 
@@ -80,33 +80,9 @@ class _EstadoCuentaState extends State<EstadoCuenta> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blueDark,
+      backgroundColor: AppColors.green,
       appBar: AppBar(
         toolbarHeight: 120,
-
-        // leading: Column(
-        //   children: [
-        //     IconButton(
-        //       icon: const Icon(Icons.arrow_back),
-        //       onPressed: () {
-        //         Navigator.of(context).pushAndRemoveUntil(
-        //           MaterialPageRoute(builder: (context) => MyHomePage()),
-        //           (Route<dynamic> route) => false,
-        //         );
-        //       },
-        //     ),
-        //   ],
-        // ),
-        // actions: [
-        //   Column(
-        //     children: [
-        //       Padding(
-        //         padding: const EdgeInsets.fromLTRB(0, 20, 20, 0),
-        //         child: Image.asset('assets/logo-blanco.png', scale: 4),
-        //       ),
-        //     ],
-        //   ),
-        // ],
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

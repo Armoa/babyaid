@@ -108,7 +108,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     var subTitle = const TextStyle(fontSize: 14, fontWeight: FontWeight.w600);
     return Scaffold(
-      backgroundColor: AppColors.blueDark,
+      backgroundColor: AppColors.green,
       appBar: AppBar(title: const Text("Mi perfil")),
       body: Container(
         decoration: const BoxDecoration(
@@ -163,7 +163,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                       ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor: WidgetStateProperty.all<Color>(
-                            AppColors.blueDark,
+                            AppColors.green,
                           ),
                           foregroundColor: WidgetStateProperty.all<Color>(
                             Colors.white,
@@ -315,7 +315,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                       Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.blueDark,
+                            backgroundColor: AppColors.green,
                           ),
                           onPressed: () {
                             Navigator.push(

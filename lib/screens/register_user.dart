@@ -180,7 +180,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                         Container(
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(50)),
-                            color: AppColors.blueDark,
+                            color: AppColors.green,
                           ),
                           child: const Padding(
                             padding: EdgeInsets.all(16),
@@ -560,7 +560,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
-                              backgroundColor: AppColors.blueDark,
+                              backgroundColor: AppColors.green,
                             ),
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {

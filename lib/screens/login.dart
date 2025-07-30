@@ -29,7 +29,7 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blueDark,
+      backgroundColor: AppColors.green,
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         backgroundColor: Colors.transparent,
@@ -308,7 +308,7 @@ class LoginScreenState extends State<LoginScreen> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
-                            backgroundColor: AppColors.blueDark,
+                            backgroundColor: AppColors.green,
                           ),
                           onPressed: () {
                             Navigator.push(
