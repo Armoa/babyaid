@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:helfer/model/colors.dart';
+import 'package:helfer/model/usuario_model.dart';
 import 'package:helfer/provider/auth_provider.dart';
 import 'package:helfer/screens/perfil_update.dart';
-import 'package:helfer/services/obtener_usuario.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -17,39 +17,46 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class ProfileScreenState extends State<ProfileScreen> {
-  String? _nombreUsuarioPerfil;
-  String? _apellidoPerfil;
-  String? _emailPerfil;
-  String? _telefonoPerfil;
-  String? _direccionPerfil;
-  String? _ciudadPerfil;
-  String? _barrioPerfil;
-  String? _imagenPerfilUrl;
-  String? _razonPerfil;
-  String? _rucPerfil;
+  // Ya no necesitamos estas variables de estado individuales,
+  // ya que los datos vendrán directamente del AuthProvider.
+  // String? _nombreUsuarioPerfil;
+  // String? _apellidoPerfil;
+  // String? _emailPerfil;
+  // String? _telefonoPerfil;
+  // String? _direccionPerfil;
+  // String? _ciudadPerfil;
+  // String? _barrioPerfil;
+  // String? _imagenPerfilUrl;
+  // String? _razonPerfil;
+  // String? _rucPerfil;
 
   @override
   void initState() {
     super.initState();
-    // Cargar datos iniciales del perfil
-    _cargarDatosPerfil();
+    // Ya no necesitamos _cargarDatosPerfil() aquí porque el AuthProvider
+    // ya tiene los datos después del login.
+    //_cargarDatosPerfil();
+
+    // Puedes forzar una recarga si quieres que el perfil se actualice siempre
+    // al entrar a la pantalla, por ejemplo, si hay cambios de foto que no
+    // se reflejan inmediatamente en AuthProvider.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cargarDatosPerfilDesdeAuthProvider();
+    });
   }
 
-  Future<void> _cargarDatosPerfil() async {
-    final datosPerfil = await obtenerUsuarioDesdeMySQL();
-    // Rellenar los controladores con los datos obtenidos
-    setState(() {
-      _nombreUsuarioPerfil = datosPerfil?.name;
-      _imagenPerfilUrl = datosPerfil?.photo;
-      _apellidoPerfil = datosPerfil?.lastName;
-      _emailPerfil = datosPerfil?.email;
-      _direccionPerfil = datosPerfil?.address;
-      _telefonoPerfil = datosPerfil?.phone;
-      _ciudadPerfil = datosPerfil?.city;
-      _barrioPerfil = datosPerfil?.barrio;
-      _razonPerfil = datosPerfil?.razonsocial;
-      _rucPerfil = datosPerfil?.ruc;
-    });
+  // Ahora esta función solo se asegura de que el AuthProvider tenga los datos
+  // o los recargue si es necesario (ej. después de subir una foto).
+  // NO llama a una API externa directamente.
+  Future<void> _cargarDatosPerfilDesdeAuthProvider() async {
+    // Aquí puedes disparar una recarga si tu AuthProvider tiene un método para ello.
+    // Por ejemplo, si subiste una foto, PerfilService podría actualizar el AuthProvider.
+    // Si tu AuthProvider.loadUser() ya recarga los datos, puedes llamarlo.
+    // Esto es útil para mantener la consistencia si los datos del perfil se pueden modificar
+    // desde otras partes de la app y necesitas que ProfileScreen refleje esos cambios.
+    await Provider.of<AuthProvider>(context, listen: false).loadUser();
+    // El setState() ya no es necesario aquí para las variables individuales,
+    // ya que leeremos directamente del provider en el build.
   }
 
   Future<void> seleccionarYSubirImagen(BuildContext context) async {
@@ -59,9 +66,9 @@ class ProfileScreenState extends State<ProfileScreen> {
     );
 
     if (imagenSeleccionada != null) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final usuarioEmail =
-          Provider.of<AuthProvider>(context, listen: false).email;
-      // print("Usuario email en seleccionarYSubirImagen: $usuarioEmail");
+          authProvider.email; // Obtén el email del AuthProvider
 
       if (usuarioEmail != null) {
         try {
@@ -71,33 +78,44 @@ class ProfileScreenState extends State<ProfileScreen> {
           );
 
           if (actualizado) {
-            await _cargarDatosPerfil(); // Recargar datos del perfil
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Imagen de perfil actualizada exitosamente'),
-                duration: Duration(seconds: 2),
-              ),
-            );
+            // Después de subir la imagen, recarga el usuario en el AuthProvider
+            // para que los cambios se reflejen en toda la app que usa el AuthProvider.
+            await authProvider
+                .loadUser(); // <--- IMPORTANTE: Recarga el usuario en el AuthProvider
+            if (context.mounted) {
+              // Verificar si el contexto sigue válido
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Imagen de perfil actualizada exitosamente'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            }
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Error al actualizar la imagen.'),
-                duration: Duration(seconds: 2),
-              ),
-            );
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Error al actualizar la imagen.'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            }
           }
         } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al actualizar la imagen: $e')),
-          );
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error al actualizar la imagen: $e')),
+            );
+          }
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Usuario no disponible. Inicia sesión nuevamente.'),
-          ),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Usuario no disponible. Inicia sesión nuevamente.'),
+            ),
+          );
+        }
       }
     } else {
       // print('No se seleccionó ninguna imagen.');
@@ -106,6 +124,18 @@ class ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Obtén la instancia del AuthProvider para acceder a los datos del usuario
+    final authProvider = Provider.of<AuthProvider>(context);
+    final UsuarioModel? user = authProvider.user;
+
+    if (user == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("Mi perfil")),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // Ahora usa los datos directamente del objeto 'user'
     var subTitle = const TextStyle(fontSize: 14, fontWeight: FontWeight.w600);
     return Scaffold(
       backgroundColor: AppColors.green,
@@ -141,11 +171,13 @@ class ProfileScreenState extends State<ProfileScreen> {
                           child: CircleAvatar(
                             radius: 60,
                             backgroundImage:
-                                _imagenPerfilUrl != null
-                                    ? NetworkImage(_imagenPerfilUrl!)
+                                user.photo != null
+                                    ? NetworkImage(
+                                      user.photo!,
+                                    ) // Usa user.photo
                                     : null,
                             child:
-                                _imagenPerfilUrl == null
+                                user.photo == null
                                     ? Shimmer.fromColors(
                                       baseColor: Colors.grey[300]!,
                                       highlightColor: Colors.grey[100]!,
@@ -158,7 +190,6 @@ class ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(width: 20),
                       ElevatedButton(
                         style: ButtonStyle(
@@ -169,7 +200,6 @@ class ProfileScreenState extends State<ProfileScreen> {
                             Colors.white,
                           ),
                         ),
-
                         onPressed: () => seleccionarYSubirImagen(context),
                         child: const Text(
                           'Actualizar foto',
@@ -189,83 +219,75 @@ class ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  _nombreUsuarioPerfil != null
-                      ? cardPerfil(
-                        subTitle,
-                        "Nombre del usuario",
-                        _nombreUsuarioPerfil,
-                        Icons.lock,
-                      )
-                      : const ShimmerWidget(),
+                  // NOMBRE DEL USUARIO
+                  // Ya no necesitas la comprobación _nombreUsuarioPerfil != null
+                  // Usas directamente user.name
+                  cardPerfil(
+                    subTitle,
+                    "Nombre del usuario",
+                    user.name, // <-- Usa user.name
+                    Icons.lock,
+                  ),
                   const SizedBox(height: 10),
 
-                  // NOMBRE Y APELLIDO
-                  _nombreUsuarioPerfil != null
-                      ? Card(
-                        elevation: 0,
-                        child: ListTile(
-                          leading: const Icon(Icons.person),
-                          title: const Text(
-                            "Apellido",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          subtitle: Text(
-                            _apellidoPerfil.toString(),
-                            style: subTitle,
-                          ),
-                        ),
-                      )
-                      : const ShimmerWidget(),
+                  // APELLIDO
+                  Card(
+                    elevation: 0,
+                    child: ListTile(
+                      leading: const Icon(Icons.person),
+                      title: const Text(
+                        "Apellido",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      subtitle: Text(
+                        user.lastName ??
+                            'No disponible', // <-- Usa user.lastName
+                        style: subTitle,
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 10),
 
                   // EMAIL
-                  _nombreUsuarioPerfil != null
-                      ? cardPerfil(
-                        subTitle,
-                        "Correo",
-                        _emailPerfil,
-                        Icons.email,
-                      )
-                      : const ShimmerWidget(),
-
+                  cardPerfil(
+                    subTitle,
+                    "Correo",
+                    user.email, // <-- Usa user.email
+                    Icons.email,
+                  ),
                   const SizedBox(height: 10),
 
                   // TELEFONO
-                  _nombreUsuarioPerfil != null
-                      ? cardPerfil(
-                        subTitle,
-                        "Numero de celular",
-                        _telefonoPerfil,
-                        Icons.phone_android,
-                      )
-                      : const ShimmerWidget(),
-
+                  cardPerfil(
+                    subTitle,
+                    "Numero de celular",
+                    user.phone ?? 'No disponible', // <-- Usa user.phone
+                    Icons.phone_android,
+                  ),
                   const SizedBox(height: 10),
                   // DIRECCION
-                  _nombreUsuarioPerfil != null
-                      ? cardPerfil(
-                        subTitle,
-                        "Dirección",
-                        _direccionPerfil,
-                        Icons.place,
-                      )
-                      : const ShimmerWidget(),
-
+                  cardPerfil(
+                    subTitle,
+                    "Dirección",
+                    user.address ?? 'No disponible', // <-- Usa user.address
+                    Icons.place,
+                  ),
                   const SizedBox(height: 10),
                   // CIUDAD
-                  _nombreUsuarioPerfil != null
-                      ? cardPerfil(
-                        subTitle,
-                        "Ciudada",
-                        _ciudadPerfil,
-                        Icons.location_city,
-                      )
-                      : const ShimmerWidget(),
+                  cardPerfil(
+                    subTitle,
+                    "Ciudad", // Corregí el typo "Ciudada" a "Ciudad"
+                    user.city ?? 'No disponible', // <-- Usa user.city
+                    Icons.location_city,
+                  ),
                   const SizedBox(height: 10),
                   // Barrio
-                  _nombreUsuarioPerfil != null
-                      ? cardPerfil(subTitle, "Barrio", _barrioPerfil, Icons.map)
-                      : const ShimmerWidget(),
+                  cardPerfil(
+                    subTitle,
+                    "Barrio",
+                    user.barrio ?? 'No disponible', // <-- Usa user.barrio
+                    Icons.map,
+                  ),
                   const SizedBox(height: 30),
                   // DATOS DE FACTURACION
                   const Padding(
@@ -280,36 +302,33 @@ class ProfileScreenState extends State<ProfileScreen> {
                   ),
                   // RAZON SOCIAL
                   const SizedBox(height: 10),
-                  _nombreUsuarioPerfil != null
-                      ? cardPerfil(
-                        subTitle,
-                        "Nombre o Rozón Social",
-                        _razonPerfil,
-                        Icons.info,
-                      )
-                      : const ShimmerWidget(),
+                  cardPerfil(
+                    subTitle,
+                    "Nombre o Razón Social", // Corregí el typo "Rozón" a "Razón"
+                    user.razonsocial ??
+                        'No disponible', // <-- Usa user.razonsocial
+                    Icons.info,
+                  ),
                   const SizedBox(height: 10),
 
                   // RUC
-                  _nombreUsuarioPerfil != null
-                      ? Card(
-                        elevation: 0,
-                        child: ListTile(
-                          leading: const Icon(Icons.info_outline),
-                          title: const Text(
-                            "C.I. / R.U.C.",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          subtitle: Text(
-                            '${_rucPerfil.toString()} ',
-                            style: subTitle,
-                          ),
-                        ),
-                      )
-                      : const ShimmerWidget(),
+                  Card(
+                    elevation: 0,
+                    child: ListTile(
+                      leading: const Icon(Icons.info_outline),
+                      title: const Text(
+                        "C.I. / R.U.C.",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      subtitle: Text(
+                        user.ruc ?? 'No disponible', // <-- Usa user.ruc
+                        style: subTitle,
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 10),
 
-                  // BOTON  ACTUALAR DATOS DE PERFIL
+                  // BOTON ACTUALAR DATOS DE PERFIL
                   Row(
                     children: [
                       Expanded(

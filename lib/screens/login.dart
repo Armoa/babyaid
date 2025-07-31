@@ -182,12 +182,12 @@ class LoginScreenState extends State<LoginScreen> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  result?['message'] ?? 'Error desconocido',
+                                  result['message'] ?? 'Error desconocido',
                                 ),
                               ),
                             );
 
-                            if (result?['status'] == "success") {
+                            if (result['status'] == "success") {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
@@ -261,39 +261,6 @@ class LoginScreenState extends State<LoginScreen> {
                               );
                             }
                           },
-                          // onPressed: () async {
-                          //   UsuarioModel? user = await AuthService()
-                          //       .signInWithGoogle(context);
-                          //   if (user != null) {
-                          //     // Guardar usuario en la base de datos MySQL
-                          //     await guardarUsuarioEnMySQL();
-
-                          //     // Mostrar mensaje de bienvenida
-                          //     ScaffoldMessenger.of(context).showSnackBar(
-                          //       SnackBar(
-                          //         content: Text("Bienvenido, ${user.name}!"),
-                          //         duration: Duration(seconds: 2),
-                          //       ),
-                          //     );
-
-                          //     // Redirigir a MyHomePage después del mensaje
-                          //     Navigator.pushReplacement(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => MyHomePage(),
-                          //       ),
-                          //     );
-                          //   } else {
-                          //     ScaffoldMessenger.of(context).showSnackBar(
-                          //       SnackBar(
-                          //         content: Text(
-                          //           "Error al iniciar sesión. Inténtalo de nuevo.",
-                          //         ),
-                          //         duration: Duration(seconds: 2),
-                          //       ),
-                          //     );
-                          //   }
-                          // },
                         ),
                       ),
                     ],

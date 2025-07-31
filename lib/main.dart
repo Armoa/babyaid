@@ -37,7 +37,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => PaymentProvider()),
         ChangeNotifierProvider(create: (_) => CuponProvider()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
   NotifHelper.initNotif();
@@ -56,10 +56,9 @@ class MyApp extends StatelessWidget {
       themeMode: themeProvider.themeMode,
       theme: lightTheme,
       darkTheme: darkTheme,
-      initialRoute: 'SplashScreenState',
+      home: const SplashScreen(),
       routes: {
         'MyHomePage': (context) => const MyHomePage(),
-        'SplashScreenState': (context) => SplashScreen(),
         'login': (context) => LoginScreen(),
       },
     );

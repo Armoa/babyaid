@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:helfer/model/colors.dart';
 import 'package:helfer/model/usuario_model.dart';
-import 'package:helfer/screens/home.dart';
-import 'package:helfer/services/actualizar_usuario.dart';
-import 'package:helfer/services/obtener_usuario.dart';
+import 'package:helfer/provider/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class PerfilUpdate extends StatefulWidget {
   const PerfilUpdate({super.key});
@@ -30,8 +29,8 @@ class PerfilUpdateState extends State<PerfilUpdate> {
   late TextEditingController _ciController;
 
   String _tipoDocumento = 'CI';
-  String _whatsapp = '';
-  String _ci = '';
+  // String _whatsapp = ''; // Ya no necesitas esta variable si usas el controller
+  // String _ci = ''; // Ya no necesitas esta variable si usas el controller
 
   @override
   void initState() {
@@ -47,8 +46,12 @@ class PerfilUpdateState extends State<PerfilUpdate> {
     _rucController = TextEditingController();
     _dateBirthController = TextEditingController();
     _ciController = TextEditingController();
-    // Cargar datos iniciales del perfil
-    _cargarDatosPerfil();
+
+    // Llama a _cargarDatosPerfilDesdeAuthProvider en el primer frame
+    // para asegurar que el contexto esté disponible.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cargarDatosPerfilDesdeAuthProvider();
+    });
   }
 
   @override
@@ -68,65 +71,107 @@ class PerfilUpdateState extends State<PerfilUpdate> {
     super.dispose();
   }
 
-  Future<void> _cargarDatosPerfil() async {
-    UsuarioModel? datosPerfil = await obtenerUsuarioDesdeMySQL();
-    if (datosPerfil != null) {
-      // Rellenar los controladores con los datos obtenidos
+  // --- NUEVO MÉTODO PARA CARGAR DATOS DESDE AUTHPROVIDER ---
+  Future<void> _cargarDatosPerfilDesdeAuthProvider() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final user =
+        authProvider.user; // Obtén el objeto UsuarioModel del AuthProvider
+
+    if (user != null) {
       setState(() {
-        _nombreUsuarioController.text = datosPerfil.name;
-        _apellidoController.text = datosPerfil.lastName;
-        _emailController.text = datosPerfil.email;
-        _direccionController.text = datosPerfil.address;
-        _ciudadController.text = datosPerfil.city;
-        _barrioController.text = datosPerfil.barrio;
-        _telefonoController.text = datosPerfil.phone;
-        _razonsocialController.text = datosPerfil.razonsocial;
-        _rucController.text = datosPerfil.ruc;
-        _tipoDocumento = datosPerfil.tipoCi;
-        _ciController.text = datosPerfil.ci;
+        _nombreUsuarioController.text = user.name;
+        _apellidoController.text = user.lastName;
+        // _emailController.text = user.email; // El email no debería ser editable
+        _direccionController.text = user.address;
+        _ciudadController.text = user.city;
+        _barrioController.text = user.barrio;
+        _telefonoController.text = user.phone;
+        _razonsocialController.text = user.razonsocial;
+        _rucController.text = user.ruc;
+        _tipoDocumento = user.tipoCi; // Asume 'CI' si es nulo
+        _ciController.text = user.ci;
         _dateBirthController.text =
-            datosPerfil.dateBirth == '1990-01-01' ? '' : datosPerfil.dateBirth;
+            user.dateBirth == '1990-01-01'
+                ? ''
+                : user.dateBirth; // Maneja el valor por defecto
       });
+    } else {
+      // Si el usuario es nulo, significa que no está logueado o hubo un error al cargar.
+      // Puedes redirigir al login o mostrar un mensaje.
+      print("DEBUG PerfilUpdate: Usuario no disponible en AuthProvider.");
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No se pudo cargar el perfil. Inicia sesión nuevamente.',
+            ),
+          ),
+        );
+        // Opcional: Redirigir al login si el usuario no está disponible
+        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+      }
     }
   }
 
   void _actualizarUsuario() async {
-    bool success = await actualizarUsuarioEnMySQL(
-      _nombreUsuarioController.text,
-      _apellidoController.text,
-      _emailController.text,
-      _direccionController.text,
-      _ciudadController.text,
-      _barrioController.text,
-      _telefonoController.text,
-      _razonsocialController.text,
-      _rucController.text,
-      _dateBirthController.text,
-      _ciController.text,
-      _tipoDocumento,
-    );
-
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Perfil actualizado correctamente"),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      // Volver a ProfileScreen y forzar recarga
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MyHomePage()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error al actualizar perfil"),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.red,
-        ),
-      );
+    if (!_formKey.currentState!.validate()) {
+      return; // No continuar si la validación falla
     }
+    _formKey.currentState!.save(); // Guarda los valores de los campos
+
+    // Obtén el AuthProvider para acceder al userId y al método makeAuthenticatedRequest si es necesario
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    // Aquí debes llamar a tu servicio para actualizar el usuario en MySQL
+    // Necesitarás el ID del usuario para la actualización.
+    // Asumo que tu servicio 'actualizarUsuarioEnMySQL' existe y espera estos parámetros.
+    // También asumo que tu backend espera el userId para actualizar.
+
+    // bool success = await PerfilService().actualizarUsuario(
+    //   // <--- Asumo que tienes un PerfilService
+    //   authProvider.userId!,
+    //   _nombreUsuarioController.text,
+    //   _apellidoController.text,
+    //   _emailController.text,
+    //   _direccionController.text,
+    //   _ciudadController.text,
+    //   _barrioController.text,
+    //   _telefonoController.text,
+    //   _razonsocialController.text,
+    //   _rucController.text,
+    //   _dateBirthController.text,
+    //   _ciController.text,
+    //   _tipoDocumento,
+    // );
+
+    // if (success) {
+    //   if (context.mounted) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(
+    //         content: Text("Perfil actualizado correctamente"),
+    //         duration: Duration(seconds: 2),
+    //       ),
+    //     );
+    //     // Después de actualizar, recarga el usuario en el AuthProvider
+    //     // para que los cambios se reflejen en toda la app.
+    //     await authProvider.loadUser(); // <--- ¡IMPORTANTE!
+
+    //     // Vuelve a la pantalla anterior (ProfileScreen)
+    //     Navigator.pop(
+    //       context,
+    //     ); // Usamos pop para regresar a la pantalla anterior
+    //   }
+    // } else {
+    //   if (context.mounted) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(
+    //         content: Text("Error al actualizar perfil"),
+    //         duration: Duration(seconds: 2),
+    //         backgroundColor: Colors.red,
+    //       ),
+    //     );
+    //   }
+    // }
   }
 
   @override
@@ -134,6 +179,20 @@ class PerfilUpdateState extends State<PerfilUpdate> {
     var outlineInputBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(16.0),
     );
+
+    // Escucha el AuthProvider para que la UI se reconstruya si el usuario cambia
+    final authProvider = Provider.of<AuthProvider>(context);
+    final UsuarioModel? user = authProvider.user;
+
+    // Si el usuario es nulo, muestra un indicador de carga o un mensaje.
+    // Esto debería ser raro si la navegación es correcta.
+    if (user == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("Actualizar perfil")),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.green,
       appBar: AppBar(title: const Text("Actualizar perfil")),
@@ -158,20 +217,16 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Rectángulo previo al título
                       Container(
                         width: 14,
                         height: 14,
                         decoration: BoxDecoration(
                           color: AppColors.grayDark,
-                          borderRadius: BorderRadius.circular(
-                            2,
-                          ), // Si querés esquinas suaves
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-                      SizedBox(width: 10),
-                      // Título centrado verticalmente
-                      Text(
+                      const SizedBox(width: 10),
+                      const Text(
                         'Tipo de documento',
                         style: TextStyle(
                           fontSize: 18,
@@ -179,9 +234,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                           color: AppColors.grayDark,
                         ),
                       ),
-                      SizedBox(width: 10),
-
-                      // Línea que se extiende hacia la derecha
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Container(height: 2, color: AppColors.grayDark),
                       ),
@@ -193,10 +246,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                     padding: const EdgeInsets.fromLTRB(15, 2, 15, 2),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16.0),
-                      border: Border.all(
-                        color: Colors.grey,
-                        width: 1.0, // Grosor del borde (aquí lo haces fino)
-                      ),
+                      border: Border.all(color: Colors.grey, width: 1.0),
                     ),
                     child: Row(
                       children: [
@@ -239,7 +289,6 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                           _tipoDocumento == 'CI'
                               ? 'Cédula de Identidad'
                               : 'Documento de identidad',
-
                       prefixIcon: const Icon(Icons.credit_card),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16.0),
@@ -247,14 +296,11 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, introduce numero de documento';
+                        return 'Por favor, introduce número de documento';
                       }
                       return null;
                     },
-                    onSaved: (value) {
-                      _ci = value!;
-                      debugPrint('Número guardado: $_ci');
-                    },
+                    // onSaved: (value) { _ci = value!; }, // Ya no es necesario si usas el controller directamente
                   ),
 
                   const SizedBox(height: 30),
@@ -267,11 +313,10 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, introduce un nombre de usuario';
+                        return 'Por favor, introduce un nombre';
                       }
                       return null;
                     },
-                    // onSaved: () {},
                   ),
                   const SizedBox(height: 30),
                   TextFormField(
@@ -283,17 +328,16 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, introduce un nombre de usuario';
+                        return 'Por favor, introduce un apellido';
                       }
                       return null;
                     },
-                    // onSaved: () {},
                   ),
                   const SizedBox(height: 20),
 
                   TextFormField(
                     controller: _emailController,
-                    enabled: false,
+                    enabled: false, // El email no debería ser editable
                     decoration: InputDecoration(
                       labelText: 'Correo Electrónico',
                       prefixIcon: const Icon(Icons.email),
@@ -309,13 +353,12 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                       }
                       return null;
                     },
-                    // onSaved: (value) {_email = value!;                 },
                   ),
 
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: _dateBirthController,
-                    readOnly: true, // Hace que el campo sea solo lectura
+                    readOnly: true,
                     decoration: InputDecoration(
                       labelText: "Fecha de nacimiento",
                       prefixIcon: const Icon(Icons.event),
@@ -325,16 +368,14 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                       DateTime? pickedDate = await showDatePicker(
                         context: context,
                         initialDate: DateTime.now(),
-                        firstDate: DateTime(1900), // Rango mínimo
-                        lastDate: DateTime.now(), // Rango máximo
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
                       );
 
                       if (pickedDate != null) {
                         setState(() {
                           _dateBirthController.text =
-                              "${pickedDate.toLocal()}".split(
-                                ' ',
-                              )[0]; // Formatear fecha
+                              "${pickedDate.toLocal()}".split(' ')[0];
                         });
                       }
                     },
@@ -350,27 +391,20 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                   TextFormField(
                     controller: _telefonoController,
                     keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      // Permite solo dígitos. Esto evitará espacio sentr  carácter que no sea un número.
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
                       labelText: 'WhatsApp',
-                      // Ícono del teléfono a la izquierda
                       prefixIcon: const Icon(Icons.phone_android_rounded),
-                      // Prefijo estático con la bandera y el código
                       prefix: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Image.asset(
                             'assets/paraguay_flag.png',
-                            width: 24, // Ajusta el tamaño de la bandera
+                            width: 24,
                             height: 24,
                           ),
-                          const SizedBox(
-                            width: 8,
-                          ), // Espacio entre la bandera y el texto
-                          const Text('+595 '), // El texto del código de país
+                          const SizedBox(width: 8),
+                          const Text('+595 '),
                         ],
                       ),
                       border: OutlineInputBorder(
@@ -383,29 +417,22 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                       }
                       return null;
                     },
-                    onSaved: (value) {
-                      _whatsapp = value!;
-                      debugPrint('Número guardado: $_whatsapp');
-                    },
+                    // onSaved: (value) { _whatsapp = value!; }, // Ya no es necesario
                   ),
                   const SizedBox(height: 30),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Rectángulo previo al título
                       Container(
                         width: 14,
                         height: 14,
                         decoration: BoxDecoration(
                           color: AppColors.grayDark,
-                          borderRadius: BorderRadius.circular(
-                            2,
-                          ), // Si querés esquinas suaves
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-                      SizedBox(width: 10),
-                      // Título centrado verticalmente
-                      Text(
+                      const SizedBox(width: 10),
+                      const Text(
                         'Datos de Ubicación',
                         style: TextStyle(
                           fontSize: 18,
@@ -413,9 +440,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                           color: AppColors.grayDark,
                         ),
                       ),
-                      SizedBox(width: 10),
-
-                      // Línea que se extiende hacia la derecha
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Container(height: 2, color: AppColors.grayDark),
                       ),
@@ -426,16 +451,17 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                     controller: _direccionController,
                     decoration: InputDecoration(
                       labelText: 'Dirección',
-                      prefixIcon: const Icon(Icons.person),
+                      prefixIcon: const Icon(
+                        Icons.place,
+                      ), // Cambiado a Icons.place
                       border: outlineInputBorder,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, introduce un nombre de usuario';
+                        return 'Por favor, introduce una dirección';
                       }
                       return null;
                     },
-                    // onSaved: () {},
                   ),
 
                   const SizedBox(height: 30),
@@ -443,16 +469,17 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                     controller: _ciudadController,
                     decoration: InputDecoration(
                       labelText: 'Ciudad',
-                      prefixIcon: const Icon(Icons.person),
+                      prefixIcon: const Icon(
+                        Icons.location_city,
+                      ), // Cambiado a Icons.location_city
                       border: outlineInputBorder,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, introduce un nombre de usuario';
+                        return 'Por favor, introduce una ciudad';
                       }
                       return null;
                     },
-                    // onSaved: () {},
                   ),
                   const SizedBox(height: 30),
                   // BARRIO
@@ -465,31 +492,26 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, introduce un nombre de usuario';
+                        return 'Por favor, introduce un barrio';
                       }
                       return null;
                     },
-                    // onSaved: () {},
                   ),
                   // RAZON SOCIAL
                   const SizedBox(height: 30),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Rectángulo previo al título
                       Container(
                         width: 14,
                         height: 14,
                         decoration: BoxDecoration(
                           color: AppColors.grayDark,
-                          borderRadius: BorderRadius.circular(
-                            2,
-                          ), // Si querés esquinas suaves
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-                      SizedBox(width: 10),
-                      // Título centrado verticalmente
-                      Text(
+                      const SizedBox(width: 10),
+                      const Text(
                         'Datos de Facturación',
                         style: TextStyle(
                           fontSize: 18,
@@ -497,8 +519,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                           color: AppColors.grayDark,
                         ),
                       ),
-                      SizedBox(width: 10),
-                      // Línea que se extiende hacia la derecha
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Container(height: 2, color: AppColors.grayDark),
                       ),
@@ -509,17 +530,18 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                   TextFormField(
                     controller: _razonsocialController,
                     decoration: InputDecoration(
-                      labelText: 'Razon Social',
-                      prefixIcon: const Icon(Icons.person),
+                      labelText: 'Razón Social', // Corregido el typo
+                      prefixIcon: const Icon(
+                        Icons.business,
+                      ), // Cambiado a Icons.business
                       border: outlineInputBorder,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, introduce un nombre de usuario';
+                        return 'Por favor, introduce la razón social';
                       }
                       return null;
                     },
-                    // onSaved: () {},
                   ),
                   // RUC
                   const SizedBox(height: 30),
@@ -527,21 +549,22 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                     controller: _rucController,
                     decoration: InputDecoration(
                       labelText: 'C.I. / R.U.C.',
-                      prefixIcon: const Icon(Icons.person),
+                      prefixIcon: const Icon(
+                        Icons.credit_card,
+                      ), // Cambiado a Icons.credit_card
                       border: outlineInputBorder,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor, introduce un nombre de usuario';
+                        return 'Por favor, introduce el C.I. / R.U.C.';
                       }
                       return null;
                     },
-                    // onSaved: () {},
                   ),
 
                   const SizedBox(height: 30),
 
-                  // BOTON  ACTUALAR DATOS DE PERFIL
+                  // BOTON ACTUALAR DATOS DE PERFIL
                   Row(
                     children: [
                       Expanded(

@@ -5,6 +5,7 @@ import 'package:helfer/provider/auth_provider.dart';
 import 'package:helfer/screens/home.dart';
 import 'package:helfer/services/fetch_order_detalles.dart';
 import 'package:helfer/services/functions.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -275,9 +276,10 @@ class _EstadoCuentaState extends State<EstadoCuenta> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  SizedBox(height: 5),
                                   Row(
                                     children: [
-                                      Icon(Icons.date_range, size: 18),
+                                      Icon(Iconsax.calendar_copy, size: 18),
                                       SizedBox(width: 8),
                                       Text(
                                         DateFormat('d \'de\' MMMM y', 'es_PY')
@@ -290,9 +292,10 @@ class _EstadoCuentaState extends State<EstadoCuenta> {
                                       ),
                                     ],
                                   ),
+                                  SizedBox(height: 5),
                                   Row(
                                     children: [
-                                      Icon(Icons.access_time, size: 18),
+                                      Icon(Iconsax.clock_copy, size: 18),
                                       SizedBox(width: 8),
                                       Text(
                                         'Paquete: ${order.paqueteHoras}',

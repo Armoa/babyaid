@@ -1,187 +1,262 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:helfer/model/usuario_model.dart';
-import 'package:helfer/services/obtener_usuario.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
-  UsuarioModel? usuario;
-  int? userId;
-  int? tokenData;
-  String? _email;
-  String? get email => _email;
-  bool? isLogged;
-  bool get isAuthenticated => _user != null;
+  // Solo una instancia de storage para toda la clase
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  UsuarioModel? _user;
+  // Variables de estado
+  bool _isLogged = false; // Estado principal de login
+  UsuarioModel? _user; // Objeto de usuario si está logueado
+  int? _userId; // ID del usuario, obtenido del _user
+  String? _email; // Email del usuario, obtenido del _user
+
+  // Getters para acceder al estado desde fuera
+  bool get isLogged => _isLogged;
   UsuarioModel? get user => _user;
+  int? get userId => _userId;
+  String? get email => _email;
 
-  void setUserEmail(String email) {
-    _email = email;
-    notifyListeners();
-  }
-
+  // Constructor: inicializa el estado del usuario al crear el proveedor
   AuthProvider() {
     _initUsuario();
   }
 
+  // --- Métodos de Inicialización y Carga de Usuario ---
+
+  // _initUsuario: Se llama una vez al inicio para establecer el estado de autenticación.
   Future<void> _initUsuario() async {
-    usuario = await obtenerUsuarioDesdeMySQL();
-    if (usuario != null) {
-      userId = usuario?.id;
-      _email = usuario?.email;
+    print('⚡ Ejecutando verificación de perfil...');
+    await loadUser(); // Delega la lógica de carga principal a loadUser
+    // Despues de loadUser, _isLogged, _user, _userId y _email ya deberían estar actualizados
+    // No es necesario asignarlos de nuevo aquí.
+  }
+
+  // loadUser: Intenta cargar el usuario desde el token JWT almacenado.
+  // Es la fuente de verdad para el estado de autenticación.
+  Future<void> loadUser() async {
+    // No necesitas SharedPreferences para 'isLogged' si usas el JWT como fuente de verdad
+    // final prefs = await SharedPreferences.getInstance();
+    // final isLoggedPrefs = prefs.getBool('isLogged') ?? false; // Eliminar esta línea
+
+    final storedToken = await _storage.read(key: 'jwt_token');
+    print('DEBUG: Token almacenado en loadUser: ${storedToken ?? 'null'}');
+
+    if (storedToken == null || storedToken.isEmpty) {
+      // Si no hay token, el usuario no está logueado
+      _isLogged = false;
+      _user = null;
+      _userId = null;
+      _email = null;
+      print('! No hay JWT o no está logueado.');
       notifyListeners();
+      return;
+    }
+
+    // Si hay un token, intentar validar y obtener el perfil del usuario
+    try {
+      final userResponse = await makeAuthenticatedRequest(
+        'https://helfer.flatzi.com/app/get_user.php',
+      );
+
+      // makeAuthenticatedRequest ya devuelve Map<String, dynamic>?
+      // Verifica la respuesta directamente
+      if (userResponse != null &&
+          userResponse['status'] == 'success' &&
+          userResponse['user'] != null) {
+        _user = UsuarioModel.fromJson(userResponse['user']);
+        _userId = _user!.id; // Asignar a la variable privada
+        _email = _user!.email; // Asignar a la variable privada
+        _isLogged =
+            true; // Establecer a true si la carga del usuario fue exitosa
+        print('DEBUG: Usuario cargado con éxito. ID: $_userId, Email: $_email');
+      } else {
+        // La API respondió pero no con éxito (ej. token inválido según get_user.php)
+        print(
+          "Error al cargar usuario con JWT: Token inválido o datos no encontrados. Forzando logout.",
+        );
+        await logout(); // Forzar logout para limpiar el token inválido
+      }
+    } catch (e) {
+      // Error de red, parseo, o cualquier otra excepción durante la solicitud
+      print("❌ Error de conexión/parseo al cargar usuario con JWT: $e");
+      await logout(); // Forzar logout en caso de error
+    } finally {
+      notifyListeners(); // Notifica a los widgets que el estado ha cambiado
     }
   }
 
-  // ✅ Notificar cambios para actualizar la UI
-  void setUserAuthenticated(UsuarioModel user) {
-    _user = user;
-    userId = user.id;
-    notifyListeners();
-  }
+  // --- Métodos de Autenticación ---
 
-  Future<Map<String, dynamic>?> loginUser(String email, String password) async {
-    final url = Uri.parse("https://helfer.flatzi.com/login.php");
+  Future<Map<String, dynamic>> loginUser(String email, String password) async {
+    final url = Uri.parse('https://helfer.flatzi.com/app/login.php');
+    print('LOGIN: $email | $password');
 
     try {
-      print('LOGIN: $email | $password');
-
       final response = await http.post(
         url,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: {'email': email, 'password': password},
       );
 
+      final data = json.decode(response.body);
+
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
         if (data['status'] == 'success') {
-          final usuarioJson = data['user'];
-          _user = UsuarioModel.fromJson(usuarioJson);
-          userId = _user!.id;
+          final token = data['token'];
+          final userJson = data['user'];
 
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('user', json.encode(usuarioJson));
-          await prefs.setBool('isLogged', true);
-
-          notifyListeners();
-          return data;
+          if (token != null && token.isNotEmpty) {
+            await _storage.write(
+              key: 'jwt_token',
+              value: token,
+            ); // Usar _storage
+            _user = UsuarioModel.fromJson(userJson);
+            _userId = _user!.id; // Asignar a la variable privada
+            _email = _user!.email; // Asignar a la variable privada
+            _isLogged = true; // El login fue exitoso
+            print('DEBUG: JWT Guardado en loginUser: $token');
+            print('DEBUG: Usuario ID asignado en loginUser: $_userId');
+            return {'ok': true, 'message': 'Login exitoso'};
+          } else {
+            _isLogged = false;
+            _user = null;
+            _userId = null;
+            _email = null;
+            return {
+              'ok': false,
+              'message': 'Token no recibido o vacío del servidor',
+            };
+          }
         } else {
+          _isLogged = false;
+          _user = null;
+          _userId = null;
+          _email = null;
           return {
-            "status": "error",
-            "message": data['message'] ?? "Usuario o contraseña incorrectos",
+            'ok': false,
+            'message': data['message'] ?? 'Credenciales inválidas',
           };
         }
       } else {
+        _isLogged = false;
+        _user = null;
+        _userId = null;
+        _email = null;
+        print(
+          'DEBUG: Error HTTP en login: ${response.statusCode} - ${response.body}',
+        );
         return {
-          "status": "error",
-          "message":
-              "Servidor no respondió correctamente (${response.statusCode})",
+          'ok': false,
+          'message': 'Error de servidor: ${response.statusCode}',
         };
       }
     } catch (e) {
-      return {
-        "status": "error",
-        "message": "Error al conectar con el servidor",
-      };
+      _isLogged = false;
+      _user = null;
+      _userId = null;
+      _email = null;
+      print('DEBUG: Excepción durante el login: $e');
+      return {'ok': false, 'message': 'Error de conexión: $e'};
+    } finally {
+      notifyListeners(); // Notifica los cambios de estado (siempre)
     }
   }
 
-  // Future<Map<String, dynamic>?> registerUser(
-  //   String username,
-  //   String email,
-  //   String password,
-  // ) async {
-  //   final url = Uri.parse("https://farma.staweno.com/register.php");
+  // makeAuthenticatedRequest: Centraliza las llamadas a la API que requieren JWT.
+  Future<Map<String, dynamic>?> makeAuthenticatedRequest(String url) async {
+    final String? jwtToken = await _storage.read(
+      key: 'jwt_token',
+    ); // Usar _storage
 
-  //   try {
-  //     final response = await http.post(
-  //       url,
-  //       body: {'name': username, 'email': email, 'password': password},
-  //     );
+    if (jwtToken == null || jwtToken.isEmpty) {
+      print("No hay token JWT disponible para la solicitud autenticada.");
+      await logout(); // Forzar logout si no hay token al intentar una solicitud autenticada
+      return null;
+    }
 
-  //     if (response.statusCode == 200) {
-  //       final responseData = json.decode(response.body);
-  //       return responseData; // 🔥 Retorna un mapa en lugar de un String
-  //     } else {
-  //       return {"status": "error", "message": "Error de conexión"};
-  //     }
-  //   } catch (e) {
-  //     return {
-  //       "status": "error",
-  //       "message": "Error al conectar con el servidor",
-  //     };
-  //   }
-  // }
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {'Authorization': 'Bearer $jwtToken'},
+      );
 
-  Future<void> loadUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userData = prefs.getString('user');
-    final isLogged = prefs.getBool('isLogged') ?? false;
-
-    if (userData != null && userData.trim().isNotEmpty && isLogged) {
-      try {
-        final userJson = json.decode(userData);
-        _user = UsuarioModel.fromJson(userJson);
-        userId = _user!.id;
-        notifyListeners();
-      } catch (e) {
-        print("❌ Error al decodificar usuario: $e");
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else if (response.statusCode == 401) {
+        print(
+          "Solicitud no autorizada (401). Token expirado o inválido. Forzando logout.",
+        );
+        await logout(); // Forzar logout si el token es rechazado por el servidor
+        return null;
+      } else {
+        print(
+          "Error en la solicitud HTTP autenticada: ${response.statusCode}, Body: ${response.body}",
+        );
+        return null;
       }
-    } else {
-      print("⚠️ Datos de usuario no disponibles o vacíos.");
+    } catch (e) {
+      print("Error de red/parseo al realizar solicitud autenticada: $e");
+      return null;
     }
   }
 
-  // Future<void> loadUser() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final userData = prefs.getString('user');
-  //   final tokenData = prefs.getString('token');
-  //   final isLogged = prefs.getBool('isLogged') ?? false;
+  // --- Métodos de Gestión de Sesión ---
 
-  //   print("Datos recuperados de SharedPreferences:");
-  //   print("SharedPreferences: $userData");
-  //   print("Token: $tokenData");
+  // logout: Limpia todos los datos de sesión.
+  Future<void> logout() async {
+    // Limpia el JWT de FlutterSecureStorage
+    await _storage.delete(key: 'jwt_token');
 
-  //   if (userData != null && isLogged) {
-  //     final userJson = json.decode(userData);
-  //     _user = UsuarioModel.fromJson(userJson);
-  //     userId = _user!.id;
-  //     notifyListeners();
-  //   }
-  // }
+    // Limpia los datos de SharedPreferences si aún los usas
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(
+      'isLogged',
+    ); // Si 'isLogged' ya no es el flag principal, puedes eliminar esta línea
+
+    // Restablece las variables de estado del proveedor
+    _isLogged = false;
+    _user = null;
+    _userId = null;
+    _email = null;
+
+    print("Usuario ha cerrado sesión y JWT eliminado.");
+    notifyListeners(); // Notifica a los widgets para que reaccionen al logout
+  }
+
+  void setUserAuthenticated(UsuarioModel user) {
+    _user = user;
+    _userId = user.id;
+    notifyListeners();
+  }
 
   // CERRAR SESSION
   void clearUserData() {
     _user = null;
-    userId = null;
     _email = null;
     notifyListeners();
   }
 
-  late BuildContext _context; // ✅ Guardar referencia del contexto
+  // setUserEmail: Ahora innecesario si el email se toma de _user
+  // void setUserEmail(String email) {
+  //   _email = email;
+  //   notifyListeners();
+  // }
+
+  // La variable _context y setContext no son convencionales en ChangeNotifiers
+  // para navegación. Es mejor usar Navigator en los widgets que escuchan el estado.
+  // late BuildContext _context;
+  // void setContext(BuildContext context) {
+  //   _context = context;
+  // }
+
   @override
   void dispose() {
-    _logoutSafely();
     super.dispose();
-  }
-
-  void _logoutSafely() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AuthProvider>(_context, listen: false).logout();
-    });
-  }
-
-  Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('user');
-    await prefs.remove('token');
-    await prefs.remove('isLogged');
-
-    _user = null;
-    notifyListeners();
   }
 }
