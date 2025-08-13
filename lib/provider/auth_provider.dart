@@ -1,8 +1,9 @@
 import 'dart:convert';
 
+import 'package:babyaid/model/usuario_model.dart';
+import 'package:babyaid/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:helfer/model/usuario_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,20 +33,14 @@ class AuthProvider with ChangeNotifier {
   // _initUsuario: Se llama una vez al inicio para establecer el estado de autenticación.
   Future<void> _initUsuario() async {
     print('⚡ Ejecutando verificación de perfil...');
-    await loadUser(); // Delega la lógica de carga principal a loadUser
-    // Despues de loadUser, _isLogged, _user, _userId y _email ya deberían estar actualizados
-    // No es necesario asignarlos de nuevo aquí.
+    await loadUser();
   }
 
   // loadUser: Intenta cargar el usuario desde el token JWT almacenado.
   // Es la fuente de verdad para el estado de autenticación.
   Future<void> loadUser() async {
-    // No necesitas SharedPreferences para 'isLogged' si usas el JWT como fuente de verdad
-    // final prefs = await SharedPreferences.getInstance();
-    // final isLoggedPrefs = prefs.getBool('isLogged') ?? false; // Eliminar esta línea
-
     final storedToken = await _storage.read(key: 'jwt_token');
-    print('DEBUG: Token almacenado en loadUser: ${storedToken ?? 'null'}');
+    // print('DEBUG: Token almacenado en loadUser: ${storedToken ?? 'null'}');
 
     if (storedToken == null || storedToken.isEmpty) {
       // Si no hay token, el usuario no está logueado
@@ -235,25 +230,36 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Método que se llama cuando el token expira
+  Future<void> handleTokenExpired(BuildContext context) async {
+    // 1. Limpia los datos de la sesión (token, etc.)
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('jwt_token');
+    await prefs.remove('user_data');
+
+    // 2. Muestra un mensaje al usuario
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.',
+        ),
+        backgroundColor: Colors.red,
+      ),
+    );
+
+    // 3. Navega de regreso a la pantalla de login
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
   // CERRAR SESSION
   void clearUserData() {
     _user = null;
     _email = null;
     notifyListeners();
   }
-
-  // setUserEmail: Ahora innecesario si el email se toma de _user
-  // void setUserEmail(String email) {
-  //   _email = email;
-  //   notifyListeners();
-  // }
-
-  // La variable _context y setContext no son convencionales en ChangeNotifiers
-  // para navegación. Es mejor usar Navigator en los widgets que escuchan el estado.
-  // late BuildContext _context;
-  // void setContext(BuildContext context) {
-  //   _context = context;
-  // }
 
   @override
   void dispose() {

@@ -1,11 +1,11 @@
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/model/mapa_city.dart';
+import 'package:babyaid/model/usuario_model.dart';
+import 'package:babyaid/screens/mapaScreen.dart';
+import 'package:babyaid/services/perfil_service.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/model/mapa_city.dart';
-import 'package:helfer/model/usuario_model.dart';
-import 'package:helfer/screens/mapaScreen.dart';
-import 'package:helfer/screens/selector_ubicacion.dart';
-import 'package:helfer/services/obtener_usuario.dart';
-import 'package:helfer/services/perfil_service.dart';
+import 'package:flutter/services.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 class AddAddressScreen extends StatefulWidget {
   const AddAddressScreen({super.key});
@@ -17,11 +17,17 @@ class AddAddressScreen extends StatefulWidget {
 class AddAddressScreenState extends State<AddAddressScreen> {
   final _nombreUbicacionController = TextEditingController();
   final _numeracionController = TextEditingController();
-  String? ciudadSeleccionada;
   final _calleController = TextEditingController();
+  final _calleSecundariaController = TextEditingController();
+  final _referenciaController = TextEditingController();
+  final _phoneController = TextEditingController();
+  String tel = '';
+
+  String? ciudadSeleccionada;
   double? latitud;
   double? longitud;
-  int shippingCost = 0;
+
+  final PerfilService _perfilService = PerfilService();
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +58,7 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                   decoration: InputDecoration(
                     labelText: 'Nombre de Ubicación',
                     prefixIcon: const Icon(
-                      Icons.person_2_outlined,
+                      Iconsax.house_copy,
                     ), // Icono a la izquierda
                     border: OutlineInputBorder(
                       // Borde para un aspecto más definido
@@ -62,25 +68,9 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
-                // Campo de Numeración
-                TextFormField(
-                  controller: _numeracionController,
-                  decoration: InputDecoration(
-                    labelText: 'Número de Casa o Dpto.',
-                    prefixIcon: const Icon(
-                      Icons.home_outlined,
-                    ), // Icono a la izquierda
-                    border: OutlineInputBorder(
-                      // Borde para un aspecto más definido
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 10),
 
                 // Selector de Ciudad
+                const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
                   decoration: InputDecoration(
                     labelText: 'Ciudad',
@@ -89,7 +79,7 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: const BorderSide(color: Colors.blueGrey),
                     ),
-                    prefixIcon: const Icon(Icons.location_city), //
+                    prefixIcon: const Icon(Iconsax.building_copy), //
                   ),
                   value: ciudadSeleccionada,
                   items:
@@ -102,22 +92,68 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                   onChanged: (value) {
                     setState(() {
                       ciudadSeleccionada = value;
-
-                      // Buscar el costo de envío de la ciudad seleccionada
-                      var selectedCity = cities.firstWhere(
-                        (ciudad) => ciudad['name'] == value,
-                      );
-                      shippingCost = int.parse(selectedCity['costoEnvio']!);
                     });
                   },
                 ),
                 const SizedBox(height: 10),
 
-                // Campo de Calle principal y numero
+                // Campo de Calle principal
                 TextFormField(
                   controller: _calleController,
                   decoration: InputDecoration(
-                    labelText: 'Calle principal y numero ',
+                    labelText: 'Calle principal',
+                    prefixIcon: const Icon(
+                      Iconsax.map_copy,
+                    ), // Icono a la izquierda
+                    border: OutlineInputBorder(
+                      // Borde para un aspecto más definido
+                      borderRadius: BorderRadius.circular(
+                        10.0,
+                      ), // Bordes redondeados
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Campo de Calle secundaria
+                TextFormField(
+                  controller: _calleSecundariaController,
+                  decoration: InputDecoration(
+                    labelText: 'Calle secundaria',
+                    prefixIcon: const Icon(
+                      Iconsax.map_1_copy,
+                    ), // Icono a la izquierda
+                    border: OutlineInputBorder(
+                      // Borde para un aspecto más definido
+                      borderRadius: BorderRadius.circular(
+                        10.0,
+                      ), // Bordes redondeados
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Campo de Numeración
+                TextFormField(
+                  controller: _numeracionController,
+                  decoration: InputDecoration(
+                    labelText: 'Número de Casa o Dpto.',
+                    prefixIcon: const Icon(
+                      Iconsax.route_square_copy,
+                    ), // Icono a la izquierda
+                    border: OutlineInputBorder(
+                      // Borde para un aspecto más definido
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 10),
+                // Referencia
+                TextFormField(
+                  controller: _referenciaController,
+                  decoration: InputDecoration(
+                    labelText: 'Referencia',
                     prefixIcon: const Icon(
                       Icons.room_outlined,
                     ), // Icono a la izquierda
@@ -129,6 +165,44 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  decoration: InputDecoration(
+                    labelText: 'Número de Telefono',
+                    prefixIcon: const Icon(Icons.phone_android_rounded),
+                    prefix: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          'assets/paraguay_flag.png',
+                          width: 24, // Ajusta el tamaño de la bandera
+                          height: 24,
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ), // Espacio entre la bandera y el texto
+                        const Text('+595 '), // El texto del código de país
+                      ],
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor, introduce un número de WhatsApp válido';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    // Aquí solo se guarda lo que el usuario escribió, sin el prefijo.
+                    tel = value!;
+                  },
+                ),
+
                 const SizedBox(height: 20),
 
                 // Botón para Ubicar en Mapa
@@ -137,14 +211,13 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.blueSky,
+                          backgroundColor: AppColors.greenDark,
                         ),
                         onPressed: () {
                           if (ciudadSeleccionada != null &&
                               _calleController.text.isNotEmpty) {
                             final direccion =
                                 '$ciudadSeleccionada, ${_calleController.text}';
-
                             _mostrarMapa(context, direccion);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -178,28 +251,29 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                         onPressed: () async {
                           if (_validarCampos()) {
                             try {
-                              UsuarioModel? usuario =
-                                  await obtenerUsuarioDesdeMySQL();
-                              int? userId = usuario?.id;
-
-                              // Crear modelo `UbicacionModel` antes de enviarlo
+                              // En tu archivo add_address_screen.dart, dentro de onPressed:
                               final nuevaUbicacion = UbicacionModel(
-                                id: 0, // La DB asignará el ID automáticamente
+                                id: 0,
                                 nombreUbicacion:
                                     _nombreUbicacionController.text,
                                 callePrincipal: _calleController.text,
                                 numeracion: _numeracionController.text,
+
+                                calleSecundaria:
+                                    _calleSecundariaController.text,
+                                referencia: _referenciaController.text,
+                                tel: _phoneController.text,
+
                                 ciudad: ciudadSeleccionada,
-                                costo: shippingCost, // Asegurar que es int
-                                latitud:
-                                    double.tryParse(latitud.toString()) ?? 0.0,
-                                longitud:
-                                    double.tryParse(longitud.toString()) ?? 0.0,
-                                userId: userId ?? 0,
+                                latitud: latitud ?? 0.0,
+                                longitud: longitud ?? 0.0,
+                                userId: 0,
                               );
 
-                              bool guardado = await PerfilService()
+                              bool guardado = await _perfilService
                                   .crearUbicacion(nuevaUbicacion);
+
+                              if (!context.mounted) return;
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -213,19 +287,12 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                               );
 
                               if (guardado) {
-                                _limpiarFormulario();
-                                setState(() {});
-                                Navigator.pushReplacement(
-                                  // ignore: use_build_context_synchronously
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => const SelectorUbicacion(),
-                                  ),
-                                );
+                                // Al regresar a la pantalla anterior, pasamos 'true'
+                                // para indicarle que debe refrescar la lista.
+                                Navigator.pop(context, true);
                               }
                             } catch (e) {
-                              // ignore: use_build_context_synchronously
+                              if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("Error: $e")),
                               );
@@ -256,6 +323,7 @@ class AddAddressScreenState extends State<AddAddressScreen> {
         _calleController.text.isEmpty ||
         _nombreUbicacionController.text.isEmpty ||
         _numeracionController.text.isEmpty ||
+        _phoneController.text.isEmpty ||
         latitud == null ||
         longitud == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -266,7 +334,7 @@ class AddAddressScreenState extends State<AddAddressScreen> {
     return true;
   }
 
-  void _limpiarFormulario() {
+  void limpiarFormulario() {
     setState(() {
       ciudadSeleccionada = null;
       _calleController.clear();

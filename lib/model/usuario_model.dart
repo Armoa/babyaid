@@ -5,13 +5,11 @@ class UsuarioModel {
   final String email;
   final String photo;
   final String address;
-
   final String phone;
   final String city;
   final String barrio;
   final String razonsocial;
   final String ruc;
-
   final String dateBirth;
   final String dateCreated;
   final String token;
@@ -25,7 +23,6 @@ class UsuarioModel {
     required this.email,
     required this.photo,
     required this.address,
-
     required this.phone,
     required this.city,
     required this.barrio,
@@ -33,7 +30,6 @@ class UsuarioModel {
     required this.ruc,
     required this.tipoCi,
     required this.ci,
-
     required this.dateBirth,
     required this.dateCreated,
     required this.token,
@@ -89,7 +85,9 @@ class UbicacionModel {
   final double latitud;
   final double longitud;
   final String? ciudad;
-  final int costo;
+  final String? calleSecundaria;
+  final String? referencia;
+  final String? tel;
   final int userId;
 
   UbicacionModel({
@@ -99,8 +97,10 @@ class UbicacionModel {
     required this.numeracion,
     required this.latitud,
     required this.longitud,
+    this.calleSecundaria,
+    this.referencia,
+    this.tel,
     this.ciudad,
-    required this.costo,
     required this.userId,
   });
 
@@ -113,21 +113,26 @@ class UbicacionModel {
       latitud: double.tryParse(json["latitud"].toString()) ?? 0.0,
       longitud: double.tryParse(json["longitud"].toString()) ?? 0.0,
       ciudad: json["ciudad"],
-      costo: int.tryParse(json["costo"].toString()) ?? 0,
+      calleSecundaria: json["calle_secundaria"],
+      referencia: json["referencia"],
+      tel: json["tel"],
       userId: int.tryParse(json["user_id"].toString()) ?? 0,
     );
   }
 
+  // En tu archivo UbicacionModel.dart
   Map<String, dynamic> toJson() {
     return {
       "id": id,
       "nombre_ubicacion": nombreUbicacion,
       "calle_principal": callePrincipal,
+      "calle_secundaria": calleSecundaria ?? "",
+      "referencia": referencia ?? "",
+      "tel": tel ?? "",
       "numeracion": numeracion,
       "latitud": latitud.toString(),
       "longitud": longitud.toString(),
       "ciudad": ciudad,
-      "costo": costo,
       "user_id": userId,
     };
   }

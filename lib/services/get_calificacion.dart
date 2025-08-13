@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-// ENVIAR CALIFICACION DEL PERSONAL
+// ENVIAR CALIFICACION DEL PERSONAL Primero
 Future<Map<String, dynamic>> enviarCalificacion({
   required int idReserva,
   required int idPersonal,
@@ -10,7 +10,9 @@ Future<Map<String, dynamic>> enviarCalificacion({
   required String comentario,
   List<String>? sugerenciasSeleccionadas,
 }) async {
-  final url = Uri.parse("https://helfer.flatzi.com/app/get_calificacion.php");
+  final url = Uri.parse(
+    "https://helfer.flatzi.com/app/get_calificacion_original.php",
+  );
 
   // Prepara el cuerpo del request
   Map<String, String> bodyData = {

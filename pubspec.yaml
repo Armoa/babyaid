@@ -1,4 +1,4 @@
-name: helfer
+name: babyaid
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -58,6 +58,7 @@ dependencies:
   onesignal_flutter: ^5.3.0
   curved_labeled_navigation_bar: ^2.0.6
   iconsax_flutter: ^1.0.1
+  dio: ^5.8.0+1
 
 dev_dependencies:
   flutter_test:
@@ -112,17 +113,17 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
 flutter_native_splash:
-  color: "#E6E7E8"
+  color: "#52B68D"
   image: "assets/logo-light.png"
 
   android_12:
     image: "assets/logo-light.png"
-    color: "#E6E7E8"
-    icon_background_color: "#E6E7E8"
+    color: "#52B68D"
+    icon_background_color: "#52B68D"
     
     image_dark: "assets/logo-dark.png"
-    color_dark: "#00216B"
-    icon_background_color_dark: "#00216B"
+    color_dark: "#52B68D"
+    icon_background_color_dark: "#52B68D"
 
 flutter_icons:
   android: true

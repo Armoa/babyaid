@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:babyaid/model/notification.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/notification.dart';
 import 'package:http/http.dart' as http;
 
 class NotificacionesProvider with ChangeNotifier {
@@ -19,7 +19,7 @@ class NotificacionesProvider with ChangeNotifier {
     notifyListeners();
 
     final url = Uri.parse(
-      'https://farma.staweno.com/get_notification.php?usuario_id=$usuarioId',
+      'https://helfer.flatzi.com/app/get_notification.php?usuario_id=$usuarioId',
     );
     final respuesta = await http.get(url);
 
@@ -47,7 +47,7 @@ class NotificacionesProvider with ChangeNotifier {
   }
 
   void marcarComoLeida(int id) async {
-    final url = Uri.parse('https://farma.staweno.com/marcar_leida.php');
+    final url = Uri.parse('https://helfer.flatzi.com/app/marcar_leida.php');
     await http.post(url, body: {'id': id.toString()});
 
     _notificaciones =

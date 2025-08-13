@@ -1,17 +1,18 @@
 import 'dart:convert';
 
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/model/personal_model.dart';
+import 'package:babyaid/model/solicitud_servicio_model.dart';
+import 'package:babyaid/model/usuario_model.dart';
+import 'package:babyaid/provider/auth_provider.dart' as local_auth;
+import 'package:babyaid/provider/auth_provider.dart';
+import 'package:babyaid/provider/payment_provider.dart';
+import 'package:babyaid/screens/home.dart';
+import 'package:babyaid/services/functions.dart';
+import 'package:babyaid/widget/select_metod_pay.dart';
+import 'package:babyaid/widget/title_appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/model/personal_model.dart';
-import 'package:helfer/model/solicitud_servicio_model.dart';
-import 'package:helfer/model/usuario_model.dart';
-import 'package:helfer/provider/auth_provider.dart' as local_auth;
-import 'package:helfer/provider/auth_provider.dart';
-import 'package:helfer/provider/payment_provider.dart';
-import 'package:helfer/screens/home.dart';
-import 'package:helfer/services/functions.dart';
-import 'package:helfer/services/obtener_usuario.dart';
-import 'package:helfer/widget/select_metod_pay.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -77,7 +78,12 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
   @override
   void initState() {
     super.initState();
-    _cargarDatosUsuario();
+    _cargarDatosPerfilDesdeAuthProvider();
+  }
+
+  // DATOS DEL CLIENTE
+  Future<void> _cargarDatosPerfilDesdeAuthProvider() async {
+    await Provider.of<AuthProvider>(context, listen: false).loadUser();
   }
 
   // FUNCION DE ENVIO DE PEDIDO
@@ -180,25 +186,22 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
     }
   }
 
-  // CARGAR DATOS DEL USUARIO
-  void _cargarDatosUsuario() async {
-    UsuarioModel? usuario = await obtenerUsuarioDesdeMySQL();
-    if (usuario != null) {
-      setState(() {
-        razonSocialController.text =
-            usuario.razonsocial.isNotEmpty
-                ? usuario.razonsocial
-                : "Razons no disponible";
-        rucController.text =
-            usuario.ruc.isNotEmpty ? usuario.ruc : "R.U.C no disponible";
-      });
-    } else {
-      print("Error: No se pudo obtener los datos del usuario.");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    // Obtén la instancia del AuthProvider para acceder a los datos del usuario
+    final authProvider = Provider.of<AuthProvider>(context);
+    final UsuarioModel? user = authProvider.user;
+    if (user != null) {
+      setState(() {
+        razonSocialController.text =
+            user.razonsocial.isNotEmpty
+                ? user.razonsocial
+                : "Razons no disponible";
+        rucController.text =
+            user.ruc.isNotEmpty ? user.ruc : "R.U.C no disponible";
+      });
+    }
+
     final paymentProvider = Provider.of<PaymentProvider>(context);
     final costoTotal = calcularPrecioServicio(widget.solicitud.duracionHoras);
 
@@ -209,41 +212,48 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
     return Scaffold(
       backgroundColor: AppColors.green,
       appBar: AppBar(
+        toolbarHeight: 100,
         automaticallyImplyLeading: false,
         leading: null,
-        toolbarHeight: 120,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(Icons.arrow_back),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: Image.asset('assets/logo-blanco.png', scale: 2.5),
-                ),
-              ],
-            ),
-            SizedBox(height: 25),
-            Text(
-              "Finalizar pedido",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 25),
-          ],
-        ),
-
-        backgroundColor: AppColors.green,
+        title: TitleAppbar(),
       ),
+
+      // AppBar(
+      //   automaticallyImplyLeading: false,
+      //   leading: null,
+      //   toolbarHeight: 120,
+      //   title: Column(
+      //     crossAxisAlignment: CrossAxisAlignment.center,
+      //     children: [
+      //       Row(
+      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //         children: [
+      //           Padding(
+      //             padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+      //             child: InkWell(
+      //               onTap: () {
+      //                 Navigator.pop(context);
+      //               },
+      //               child: Icon(Icons.arrow_back),
+      //             ),
+      //           ),
+      //           Padding(
+      //             padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+      //             child: Image.asset('assets/logo-blanco.png', scale: 2.5),
+      //           ),
+      //         ],
+      //       ),
+      //       SizedBox(height: 25),
+      //       Text(
+      //         "Finalizar pedido",
+      //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      //       ),
+      //       SizedBox(height: 25),
+      //     ],
+      //   ),
+
+      //   backgroundColor: AppColors.green,
+      // ),
       body: Container(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(
@@ -257,7 +267,20 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
         ),
         child: Column(
           children: [
-            const SizedBox(height: 2),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "Finalizar pedido",
+                  style: GoogleFonts.quicksand(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -278,7 +301,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                           radius: 28,
                         ),
                         title: Text(
-                          "${widget.personal.nombre} ${widget.personal.apellido} ",
+                          "${widget.personal.nombre} ${widget.personal.apellido}",
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Column(
@@ -513,16 +536,10 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                                       vertical: 12.0,
                                     ),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(24),
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
                                   onPressed: () async {
-                                    print('Costo : $costoTotal ');
-                                    // final authProvider =
-                                    //     Provider.of<local_auth.AuthProvider>(
-                                    //       context,
-                                    //       listen: false,
-                                    //     );
                                     final clienteId =
                                         Provider.of<AuthProvider>(
                                           context,

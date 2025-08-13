@@ -1,5 +1,5 @@
+import 'package:babyaid/model/usuario_model.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/usuario_model.dart';
 
 class SolicitudServicioModel {
   final String frecuencia;

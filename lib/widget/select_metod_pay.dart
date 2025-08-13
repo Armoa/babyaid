@@ -11,6 +11,7 @@ class SelectMetodPay extends StatelessWidget {
     final paymentProvider = Provider.of<PaymentProvider>(context, listen: true);
 
     return Card(
+      elevation: 0,
       child: ListTile(
         onTap: () {
           showModalBottomSheet(

@@ -1,17 +1,21 @@
+import 'package:babyaid/provider/auth_provider.dart' as app_auth;
+import 'package:babyaid/provider/auth_provider.dart' as local_auth;
+import 'package:babyaid/provider/cart_provider.dart';
+import 'package:babyaid/provider/notificaciones_provider.dart';
+import 'package:babyaid/provider/payment_provider.dart';
+import 'package:babyaid/provider/personal_provider.dart';
+import 'package:babyaid/provider/theme.dart';
+import 'package:babyaid/screens/home.dart';
+import 'package:babyaid/screens/login.dart';
+import 'package:babyaid/services/auth_service.dart';
+import 'package:babyaid/services/firebase_messaging_service.dart';
+import 'package:babyaid/services/http_client.dart';
+import 'package:babyaid/services/notificaction.dart';
+import 'package:babyaid/splash_screen.dart';
+import 'package:babyaid/widget/theme_mode.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/provider/auth_provider.dart';
-import 'package:helfer/provider/cart_provider.dart';
-import 'package:helfer/provider/cupon_provider.dart';
-import 'package:helfer/provider/notificaciones_provider.dart';
-import 'package:helfer/provider/payment_provider.dart';
-import 'package:helfer/provider/theme.dart';
-import 'package:helfer/screens/home.dart';
-import 'package:helfer/screens/login.dart';
-import 'package:helfer/services/firebase_messaging_service.dart';
-import 'package:helfer/services/notificaction.dart';
-import 'package:helfer/splash_screen.dart';
-import 'package:helfer/widget/theme_mode.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +27,7 @@ void main() async {
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.remove('bannerShown');
-  // Inicializar el servicio de notificaciones
+
   FirebaseMessagingService messagingService = FirebaseMessagingService();
   await messagingService.initialize();
 
@@ -31,11 +35,17 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
-        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => PersonalProvider()),
+        ChangeNotifierProvider(create: (context) => app_auth.AuthProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
         ChangeNotifierProvider(create: (context) => NotificacionesProvider()),
         ChangeNotifierProvider(create: (context) => PaymentProvider()),
-        ChangeNotifierProvider(create: (_) => CuponProvider()),
+        ChangeNotifierProvider(create: (context) => local_auth.AuthProvider()),
+        Provider<AuthService>(create: (context) => AuthService()),
+
+        // Aquí agregamos el cliente Dio como un provider
+        // De esta forma, cualquier widget puede acceder a él a través del contexto
+        Provider<Dio>(create: (context) => HttpClient.getDio(context)),
       ],
       child: const MyApp(),
     ),

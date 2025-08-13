@@ -1,16 +1,18 @@
 import 'dart:convert';
 
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/model/personal_model.dart';
+import 'package:babyaid/provider/auth_provider.dart' as local_auth_provider;
+import 'package:babyaid/provider/auth_provider.dart';
+import 'package:babyaid/provider/personal_provider.dart';
+import 'package:babyaid/screens/perfil_personal_screen2.dart';
+import 'package:babyaid/services/fetch_order_detalles.dart';
+import 'package:babyaid/services/functions.dart';
+import 'package:babyaid/services/get_calificacion.dart';
+import 'package:babyaid/widget/title_appbar.dart';
+import 'package:babyaid/widget/ventana_calificacion.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/model/personal_model.dart';
-import 'package:helfer/provider/auth_provider.dart' as local_auth_provider;
-import 'package:helfer/provider/auth_provider.dart';
-import 'package:helfer/screens/home.dart';
-import 'package:helfer/screens/perfil_personal_screen2.dart';
-import 'package:helfer/services/fetch_order_detalles.dart';
-import 'package:helfer/services/functions.dart';
-import 'package:helfer/services/get_calificacion.dart';
 import 'package:http/http.dart' as http;
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:intl/intl.dart';
@@ -23,40 +25,6 @@ extension StringExtension on String {
     return this[0].toUpperCase() + substring(1);
   }
 }
-
-// Definir reseñas sugeridas
-final Map<int, List<String>> resenasSugeridas = {
-  1: [
-    'Llegó tarde el personal.',
-    'No quedó muy limpio los muebles.',
-    'El personal no coincide con el perfil mostrado.',
-    'Haré mi propia reseña.',
-  ],
-  2: [
-    'Llegó tarde el personal.',
-    'No quedó muy limpio los muebles.',
-    'El personal no coincide con el perfil mostrado.',
-    'Haré mi propia reseña.',
-  ],
-  3: [
-    'Llegó tarde el personal.',
-    'No quedó muy limpio los muebles.',
-    'El personal no coincide con el perfil mostrado.',
-    'Haré mi propia reseña.',
-  ],
-  4: [
-    'Buen servicio, pero podría mejorar la puntualidad.',
-    'El personal fue amable y cumplidor.',
-    'El resultado fue satisfactorio.',
-    'Haré mi propia reseña.',
-  ],
-  5: [
-    'Excelente atención y resultados impecables.',
-    'Muy profesional y puntual.',
-    'Recomendaría al personal sin dudas.',
-    'Haré mi propia reseña.',
-  ],
-};
 
 class MisServicios extends StatefulWidget {
   const MisServicios({super.key});
@@ -119,6 +87,23 @@ class _MisServiciosState extends State<MisServicios> {
     super.initState();
     cargarPersonales();
     _setup();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {});
+
+      final personalProvider = Provider.of<PersonalProvider>(
+        context,
+        listen: false,
+      );
+      final authProvider = Provider.of<local_auth_provider.AuthProvider>(
+        context,
+        listen: false,
+      );
+      final int? usuarioId = authProvider.user?.id;
+      if (usuarioId != null) {
+        await personalProvider.obtenerUltimoServicioFinalizado(usuarioId);
+      }
+    });
   }
 
   // CARGA DE PERSONAL
@@ -163,42 +148,7 @@ class _MisServiciosState extends State<MisServicios> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.green,
-      appBar: AppBar(
-        toolbarHeight: 120,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => MyHomePage()),
-                        (Route<dynamic> route) => false,
-                      );
-                    },
-                    child: Icon(Icons.arrow_back),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: Image.asset('assets/logo-blanco.png', scale: 2.5),
-                ),
-              ],
-            ),
-            SizedBox(height: 25),
-            Text(
-              "Mis servicios",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-
-            SizedBox(height: 25),
-          ],
-        ),
-      ),
+      appBar: AppBar(toolbarHeight: 100, title: TitleAppbar()),
       body: Container(
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -229,17 +179,18 @@ class _MisServiciosState extends State<MisServicios> {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                         child: Align(
-                          alignment: Alignment.centerLeft,
+                          alignment: Alignment.center,
                           child: Text(
-                            "Listado de Servicios",
+                            "Mis servicios",
                             style: GoogleFonts.quicksand(
-                              fontSize: 20,
+                              fontSize: 24,
                               fontWeight: FontWeight.w800,
                             ),
                           ),
                         ),
                       ),
                     ),
+                    SliverToBoxAdapter(child: SizedBox(height: 10)),
                     SliverToBoxAdapter(
                       child: Card(
                         child: Container(
@@ -349,7 +300,7 @@ class _MisServiciosState extends State<MisServicios> {
                                   order.status == 'finalizado'
                                       ? Text(
                                         promedio != null
-                                            ? '${promedio.toStringAsFixed(1)} ⭐'
+                                            ? '${promedio.toStringAsFixed(1)} ⭐ - #${order.id}'
                                             : 'Sin calificación',
                                         style: const TextStyle(fontSize: 12),
                                       )
@@ -365,18 +316,13 @@ class _MisServiciosState extends State<MisServicios> {
                                           if (!snapshot.hasData) {
                                             return const SizedBox.shrink(); // spinner si querés
                                           }
-
                                           final fueCalificado = snapshot.data!;
                                           return ElevatedButton(
                                             onPressed:
                                                 fueCalificado
                                                     ? null
-                                                    : () => mostrarPopupCalificacion(
+                                                    : () => mostrarCalificacion(
                                                       context,
-                                                      idReserva: order.id,
-                                                      idPersonal:
-                                                          personal
-                                                              .id, // ¡Aquí usamos personal.id!
                                                     ),
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor:
@@ -999,7 +945,6 @@ void mostrarPopupCalificacion(
                             ],
                           ),
                         ),
-                      // ------------------------------------
                       const SizedBox(height: 30),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -1041,17 +986,6 @@ void mostrarPopupCalificacion(
                                   );
                                   return;
                                 }
-                                // if (comentario.length < 10) {
-                                //   ScaffoldMessenger.of(context).showSnackBar(
-                                //     const SnackBar(
-                                //       content: Text(
-                                //         'Comentá al menos 10 caracteres',
-                                //       ),
-                                //     ),
-                                //   );
-                                //   return;
-                                // }
-
                                 final resultado = await enviarCalificacion(
                                   idReserva: idReserva,
                                   idPersonal: idPersonal,

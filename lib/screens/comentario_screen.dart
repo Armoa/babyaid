@@ -1,6 +1,6 @@
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/model/personal_model.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/model/personal_model.dart';
 
 // Comentario y Reseñas sobre el Personal de limpieza
 class ComentarioScreen extends StatelessWidget {

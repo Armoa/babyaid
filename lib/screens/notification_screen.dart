@@ -1,7 +1,7 @@
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/provider/auth_provider.dart';
+import 'package:babyaid/provider/notificaciones_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/provider/auth_provider.dart';
-import 'package:helfer/provider/notificaciones_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,7 +37,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blueLight,
+      backgroundColor: AppColors.green,
       appBar: AppBar(title: const Text("Notificaciones ")),
       body: Container(
         height: MediaQuery.of(context).size.height,

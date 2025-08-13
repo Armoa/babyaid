@@ -1,4 +1,4 @@
-import 'package:helfer/model/product_model.dart';
+import 'package:babyaid/model/product_model.dart';
 
 class Cupon {
   final int id;
@@ -40,7 +40,7 @@ class ProductoConCupon {
   ProductoConCupon({required this.producto, required this.cupon});
 
   factory ProductoConCupon.fromJson(Map<String, dynamic> json) {
-    print('📦 JSON Prdocuto conCupon: ${json['minimo']}'); //
+    // print('📦 JSON Prdocuto conCupon: ${json['minimo']}'); //
 
     return ProductoConCupon(
       producto: Product.fromJson({
@@ -89,7 +89,7 @@ class CuponDisponible {
   int get hashCode => clienteCuponId.hashCode;
 
   factory CuponDisponible.fromJson(Map<String, dynamic> json) {
-    print('📦 JSON Prdocuto conCupon (minimo): ${json['cupon']?['minimo']}');
+    // print('📦 JSON Prdocuto conCupon (minimo): ${json['cupon']?['minimo']}');
     return CuponDisponible(
       clienteCuponId: int.parse(json['cliente_cupon_id'].toString()),
       code: json['code'],

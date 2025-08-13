@@ -1,5 +1,5 @@
+import 'package:babyaid/model/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
 
 class KidsScreen extends StatelessWidget {
   const KidsScreen({super.key});

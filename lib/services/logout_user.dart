@@ -1,8 +1,8 @@
+import 'package:babyaid/provider/auth_provider.dart' as local_auth_provider;
+import 'package:babyaid/screens/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:helfer/provider/auth_provider.dart' as local_auth_provider;
-import 'package:helfer/screens/login.dart';
 import 'package:provider/provider.dart';
 
 Future<void> logoutUser(BuildContext context) async {

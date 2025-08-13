@@ -1,6 +1,6 @@
+import 'package:babyaid/model/cupon_model.dart';
+import 'package:babyaid/services/get_cupones.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/cupon_model.dart';
-import 'package:helfer/services/get_cupones.dart';
 
 class CuponProvider with ChangeNotifier {
   // 🔸 Lista de IDs para control rápido

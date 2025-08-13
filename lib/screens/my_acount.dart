@@ -1,14 +1,15 @@
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/provider/auth_provider.dart' as local_auth_provider;
+import 'package:babyaid/provider/auth_provider.dart';
+import 'package:babyaid/screens/address_screen.dart';
+import 'package:babyaid/screens/notification_screen.dart';
+import 'package:babyaid/screens/perfil_screen.dart';
+import 'package:babyaid/screens/ranking_personal.dart';
+import 'package:babyaid/services/logout_user.dart';
+import 'package:babyaid/services/obtener_usuario.dart';
+import 'package:babyaid/widget/title_appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/provider/auth_provider.dart' as local_auth_provider;
-import 'package:helfer/provider/auth_provider.dart';
-import 'package:helfer/screens/address_screen.dart';
-import 'package:helfer/screens/home.dart';
-import 'package:helfer/screens/list_personal_calificacion.dart';
-import 'package:helfer/screens/notification_screen.dart';
-import 'package:helfer/screens/perfil_screen.dart';
-import 'package:helfer/services/logout_user.dart';
-import 'package:helfer/services/obtener_usuario.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -71,43 +72,7 @@ class _MyAcountState extends State<MyAcount> {
             : 'https://cdn-icons-png.flaticon.com/512/64/64572.png';
 
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 120,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => MyHomePage()),
-                        (Route<dynamic> route) => false,
-                      );
-                    },
-                    child: Icon(Icons.arrow_back),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: Image.asset('assets/logo-blanco.png', scale: 2.5),
-                ),
-              ],
-            ),
-            SizedBox(height: 25),
-            Text(
-              "Mi cuenta",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-
-            SizedBox(height: 25),
-          ],
-        ),
-      ),
-
+      appBar: AppBar(toolbarHeight: 100, title: TitleAppbar()),
       body: Container(
         height: MediaQuery.of(context).size.height,
         decoration: const BoxDecoration(
@@ -122,10 +87,21 @@ class _MyAcountState extends State<MyAcount> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment
-                      .stretch, // Para que los bloques se estiren horizontalmente
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Mi Cuenta",
+                      style: GoogleFonts.quicksand(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
                 Row(
                   children: [
                     Container(

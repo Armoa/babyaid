@@ -1,8 +1,11 @@
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/model/usuario_model.dart';
+import 'package:babyaid/provider/auth_provider.dart';
+import 'package:babyaid/screens/home.dart';
+import 'package:babyaid/screens/login.dart';
+import 'package:babyaid/services/perfil_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/model/usuario_model.dart';
-import 'package:helfer/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 class PerfilUpdate extends StatefulWidget {
@@ -81,7 +84,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
       setState(() {
         _nombreUsuarioController.text = user.name;
         _apellidoController.text = user.lastName;
-        // _emailController.text = user.email; // El email no debería ser editable
+        _emailController.text = user.email; // El email no debería ser editable
         _direccionController.text = user.address;
         _ciudadController.text = user.city;
         _barrioController.text = user.barrio;
@@ -108,70 +111,82 @@ class PerfilUpdateState extends State<PerfilUpdate> {
           ),
         );
         // Opcional: Redirigir al login si el usuario no está disponible
-        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => LoginScreen()),
+        );
       }
     }
   }
 
   void _actualizarUsuario() async {
+    // 1. Validar el formulario
     if (!_formKey.currentState!.validate()) {
       return; // No continuar si la validación falla
     }
-    _formKey.currentState!.save(); // Guarda los valores de los campos
+    _formKey.currentState!
+        .save(); // Guarda los valores de los campos (si usas onSaved)
 
-    // Obtén el AuthProvider para acceder al userId y al método makeAuthenticatedRequest si es necesario
+    // 2. Obtener el AuthProvider para acceder al ID del usuario
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    // Aquí debes llamar a tu servicio para actualizar el usuario en MySQL
-    // Necesitarás el ID del usuario para la actualización.
-    // Asumo que tu servicio 'actualizarUsuarioEnMySQL' existe y espera estos parámetros.
-    // También asumo que tu backend espera el userId para actualizar.
-
-    // bool success = await PerfilService().actualizarUsuario(
-    //   // <--- Asumo que tienes un PerfilService
-    //   authProvider.userId!,
-    //   _nombreUsuarioController.text,
-    //   _apellidoController.text,
-    //   _emailController.text,
-    //   _direccionController.text,
-    //   _ciudadController.text,
-    //   _barrioController.text,
-    //   _telefonoController.text,
-    //   _razonsocialController.text,
-    //   _rucController.text,
-    //   _dateBirthController.text,
-    //   _ciController.text,
-    //   _tipoDocumento,
-    // );
-
-    // if (success) {
-    //   if (context.mounted) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(
-    //         content: Text("Perfil actualizado correctamente"),
-    //         duration: Duration(seconds: 2),
-    //       ),
-    //     );
-    //     // Después de actualizar, recarga el usuario en el AuthProvider
-    //     // para que los cambios se reflejen en toda la app.
-    //     await authProvider.loadUser(); // <--- ¡IMPORTANTE!
-
-    //     // Vuelve a la pantalla anterior (ProfileScreen)
-    //     Navigator.pop(
-    //       context,
-    //     ); // Usamos pop para regresar a la pantalla anterior
-    //   }
-    // } else {
-    //   if (context.mounted) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(
-    //         content: Text("Error al actualizar perfil"),
-    //         duration: Duration(seconds: 2),
-    //         backgroundColor: Colors.red,
-    //       ),
-    //     );
-    //   }
-    // }
+    // 3. Asegurarse de que el ID del usuario esté disponible
+    if (authProvider.userId == null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Error: ID de usuario no disponible para actualizar.",
+            ),
+          ),
+        );
+      }
+      return;
+    }
+    // Crea una instancia de PerfilService y llama a su método
+    bool success = await PerfilService().actualizarUsuarioEnMySQL(
+      userId: authProvider.userId!, // Usa el ID del usuario del AuthProvider
+      name: _nombreUsuarioController.text,
+      lastName: _apellidoController.text,
+      email: _emailController.text,
+      address: _direccionController.text,
+      city: _ciudadController.text,
+      barrio: _barrioController.text,
+      phone: _telefonoController.text,
+      razonSocial: _razonsocialController.text,
+      ruc: _rucController.text,
+      dateBirth: _dateBirthController.text,
+      ci: _ciController.text,
+      tipoDocumento: _tipoDocumento,
+    );
+    // 5. Manejar el resultado de la actualización
+    if (success) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Perfil actualizado correctamente"),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        await authProvider.loadUser();
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+          (Route<dynamic> route) =>
+              false, // Esto elimina todas las rutas anteriores
+        );
+      }
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Error al actualizar perfil"),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override

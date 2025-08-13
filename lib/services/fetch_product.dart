@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:helfer/model/product_model.dart';
+import 'package:babyaid/model/product_model.dart';
 import 'package:http/http.dart' as http;
 
 // Para Soportar Paginacion

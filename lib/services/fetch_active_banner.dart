@@ -5,10 +5,8 @@ import 'package:http/http.dart' as http;
 // Consulta API para mostrar POPUP
 Future<String?> fetchActiveBanner() async {
   final response = await http.get(
-    Uri.parse("https://api.staweno.com/get_popup_custom.php?id=8"),
+    Uri.parse("https://api.staweno.com/get_popup_custom.php?id=9"),
   );
-
-  // https://helfer.flatzi.com/app/get_popup_custom.php?id=8
 
   if (response.statusCode == 200) {
     final data = jsonDecode(response.body);

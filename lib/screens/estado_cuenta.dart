@@ -1,10 +1,10 @@
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/provider/auth_provider.dart' as local_auth_provider;
+import 'package:babyaid/provider/auth_provider.dart';
+import 'package:babyaid/services/fetch_order_detalles.dart';
+import 'package:babyaid/services/functions.dart';
+import 'package:babyaid/widget/title_appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/provider/auth_provider.dart' as local_auth_provider;
-import 'package:helfer/provider/auth_provider.dart';
-import 'package:helfer/screens/home.dart';
-import 'package:helfer/services/fetch_order_detalles.dart';
-import 'package:helfer/services/functions.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -82,83 +82,7 @@ class _EstadoCuentaState extends State<EstadoCuenta> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.green,
-      appBar: AppBar(
-        toolbarHeight: 120,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => MyHomePage()),
-                        (Route<dynamic> route) => false,
-                      );
-                    },
-                    child: Icon(Icons.arrow_back),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: Image.asset('assets/logo-blanco.png', scale: 2.5),
-                ),
-              ],
-            ),
-            SizedBox(height: 12),
-            FutureBuilder<List<OrderDetalle>>(
-              future: _orderDetallesFuture,
-              builder: (context, snapshot) {
-                int saldo = 0;
-                int serviciosPagados = 0;
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  final allDetalles = snapshot.data!;
-                  // Calcula los saldos basados en los estados de TODOS los servicios
-                  for (var detalle in allDetalles) {
-                    switch (detalle.order.status) {
-                      case 'agendado':
-                      case 'recurrente':
-                      case 'cancelado':
-                        saldo += detalle.order.total;
-                        break;
-                      case 'activo':
-                      case 'finalizado':
-                        serviciosPagados += detalle.order.total;
-                        break;
-                    }
-                  }
-                }
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize:
-                      MainAxisSize
-                          .min, // Para que la columna ocupe el espacio mínimo necesario
-                  children: [
-                    Text(
-                      'Saldo: ₲ ${numberFormat(saldo.toString())}',
-                      style: const TextStyle(
-                        fontSize: 19,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Servicios Pagados: ₲ ${numberFormat(serviciosPagados.toString())}',
-                      style: const TextStyle(fontSize: 13),
-                    ),
-                  ],
-                );
-              },
-            ),
-            SizedBox(height: 16),
-          ],
-        ),
-
-        centerTitle: true, // Centra el contenido del título
-      ),
+      appBar: AppBar(toolbarHeight: 100, title: TitleAppbar()),
       body: Container(
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -201,6 +125,53 @@ class _EstadoCuentaState extends State<EstadoCuenta> {
 
                 return CustomScrollView(
                   slivers: [
+                    SliverToBoxAdapter(
+                      child: FutureBuilder<List<OrderDetalle>>(
+                        future: _orderDetallesFuture,
+                        builder: (context, snapshot) {
+                          int saldo = 0;
+                          int serviciosPagados = 0;
+                          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                            final allDetalles = snapshot.data!;
+                            // Calcula los saldos basados en los estados de TODOS los servicios
+                            for (var detalle in allDetalles) {
+                              switch (detalle.order.status) {
+                                case 'agendado':
+                                case 'recurrente':
+                                case 'cancelado':
+                                  saldo += detalle.order.total;
+                                  break;
+                                case 'activo':
+                                case 'finalizado':
+                                  serviciosPagados += detalle.order.total;
+                                  break;
+                              }
+                            }
+                          }
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize:
+                                MainAxisSize
+                                    .min, // Para que la columna ocupe el espacio mínimo necesario
+                            children: [
+                              SizedBox(height: 10),
+                              Text(
+                                'Saldo: ₲ ${numberFormat(saldo.toString())}',
+                                style: const TextStyle(
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Servicios Pagados: ₲ ${numberFormat(serviciosPagados.toString())}',
+                                style: const TextStyle(fontSize: 13),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                     // Sliver para el selector de mes
                     SliverToBoxAdapter(
                       child: Padding(

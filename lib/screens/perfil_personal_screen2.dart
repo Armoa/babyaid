@@ -1,7 +1,7 @@
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/model/personal_model.dart';
+import 'package:babyaid/services/functions.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/model/personal_model.dart';
-import 'package:helfer/services/functions.dart';
 
 // Peril del Personal de limpieza
 class PerfilPersonalScreen2 extends StatefulWidget {

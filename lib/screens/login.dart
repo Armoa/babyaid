@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/model/usuario_model.dart';
-import 'package:helfer/provider/auth_provider.dart';
-import 'package:helfer/screens/home.dart';
-import 'package:helfer/screens/register_user.dart';
-import 'package:helfer/services/auth_service.dart';
-import 'package:helfer/services/guardar_usuario.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/provider/auth_provider.dart';
+import 'package:babyaid/screens/home.dart';
+import 'package:babyaid/screens/perfil_update.dart';
+import 'package:babyaid/screens/register_user.dart';
+import 'package:babyaid/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,6 +17,31 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
+  final _storage = const FlutterSecureStorage();
+  // Esta es la función que debes colocar aquí
+  void _handleGoogleSignIn() async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final user = await authService.signInWithGoogle(context);
+
+    if (user != null) {
+      final status = await _storage.read(key: 'user_status');
+
+      if (status == 'registered') {
+        // Redirige si el usuario es nuevo
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const PerfilUpdate()),
+        );
+      } else {
+        // Redirige si el usuario ya existe
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MyHomePage()),
+        );
+      }
+    }
+  }
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _obscureText = true; // Para controlar la visibilidad de la contraseña
@@ -67,10 +92,10 @@ class LoginScreenState extends State<LoginScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(20),
-                    child: Image.asset("assets/logo.png", scale: 4),
+                    child: Image.asset("assets/logo.png", scale: 2.7),
                   ),
 
-                  const SizedBox(height: 30.0),
+                  const SizedBox(height: 50.0),
                   TextFormField(
                     controller: emailController,
                     decoration: InputDecoration(
@@ -153,7 +178,7 @@ class LoginScreenState extends State<LoginScreen> {
                       Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue[900],
+                            backgroundColor: AppColors.greenDark,
                           ),
                           onPressed: () async {
                             final email =
@@ -236,31 +261,33 @@ class LoginScreenState extends State<LoginScreen> {
                             elevation: 0,
                           ),
                           // _handleGoogleSignIn,
-                          onPressed: () async {
-                            UsuarioModel? user = await AuthService()
-                                .signInWithGoogle(context);
-                            if (user != null) {
-                              // Mostrar mensaje de bienvenida
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("Bienvenido, ${user.name}!"),
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
+                          onPressed: _handleGoogleSignIn,
 
-                              // Ejecutar guardado y redirección desde ahí
-                              await guardarUsuarioEnMySQL(context);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    "Error al iniciar sesión. Inténtalo de nuevo.",
-                                  ),
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                            }
-                          },
+                          // () async {
+                          //   UsuarioModel? user = await AuthService()
+                          //       .signInWithGoogle(context);
+                          //   if (user != null) {
+                          //     // Mostrar mensaje de bienvenida
+                          //     ScaffoldMessenger.of(context).showSnackBar(
+                          //       SnackBar(
+                          //         content: Text("Bienvenido, ${user.name}!"),
+                          //         duration: Duration(seconds: 2),
+                          //       ),
+                          //     );
+
+                          //     // Ejecutar guardado y redirección desde ahí
+                          //     await guardarUsuarioEnMySQL(context);
+                          //   } else {
+                          //     ScaffoldMessenger.of(context).showSnackBar(
+                          //       SnackBar(
+                          //         content: Text(
+                          //           "Error al iniciar sesión. Inténtalo de nuevo.",
+                          //         ),
+                          //         duration: Duration(seconds: 2),
+                          //       ),
+                          //     );
+                          //   }
+                          // },
                         ),
                       ),
                     ],
@@ -297,7 +324,7 @@ class LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 70),
                 ],
               ),
             ),

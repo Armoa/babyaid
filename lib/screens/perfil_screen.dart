@@ -1,8 +1,8 @@
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/model/usuario_model.dart';
+import 'package:babyaid/provider/auth_provider.dart';
+import 'package:babyaid/screens/perfil_update.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/model/usuario_model.dart';
-import 'package:helfer/provider/auth_provider.dart';
-import 'package:helfer/screens/perfil_update.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -17,46 +17,16 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class ProfileScreenState extends State<ProfileScreen> {
-  // Ya no necesitamos estas variables de estado individuales,
-  // ya que los datos vendrán directamente del AuthProvider.
-  // String? _nombreUsuarioPerfil;
-  // String? _apellidoPerfil;
-  // String? _emailPerfil;
-  // String? _telefonoPerfil;
-  // String? _direccionPerfil;
-  // String? _ciudadPerfil;
-  // String? _barrioPerfil;
-  // String? _imagenPerfilUrl;
-  // String? _razonPerfil;
-  // String? _rucPerfil;
-
   @override
   void initState() {
     super.initState();
-    // Ya no necesitamos _cargarDatosPerfil() aquí porque el AuthProvider
-    // ya tiene los datos después del login.
-    //_cargarDatosPerfil();
-
-    // Puedes forzar una recarga si quieres que el perfil se actualice siempre
-    // al entrar a la pantalla, por ejemplo, si hay cambios de foto que no
-    // se reflejan inmediatamente en AuthProvider.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _cargarDatosPerfilDesdeAuthProvider();
     });
   }
 
-  // Ahora esta función solo se asegura de que el AuthProvider tenga los datos
-  // o los recargue si es necesario (ej. después de subir una foto).
-  // NO llama a una API externa directamente.
   Future<void> _cargarDatosPerfilDesdeAuthProvider() async {
-    // Aquí puedes disparar una recarga si tu AuthProvider tiene un método para ello.
-    // Por ejemplo, si subiste una foto, PerfilService podría actualizar el AuthProvider.
-    // Si tu AuthProvider.loadUser() ya recarga los datos, puedes llamarlo.
-    // Esto es útil para mantener la consistencia si los datos del perfil se pueden modificar
-    // desde otras partes de la app y necesitas que ProfileScreen refleje esos cambios.
     await Provider.of<AuthProvider>(context, listen: false).loadUser();
-    // El setState() ya no es necesario aquí para las variables individuales,
-    // ya que leeremos directamente del provider en el build.
   }
 
   Future<void> seleccionarYSubirImagen(BuildContext context) async {
@@ -78,8 +48,6 @@ class ProfileScreenState extends State<ProfileScreen> {
           );
 
           if (actualizado) {
-            // Después de subir la imagen, recarga el usuario en el AuthProvider
-            // para que los cambios se reflejen en toda la app que usa el AuthProvider.
             await authProvider
                 .loadUser(); // <--- IMPORTANTE: Recarga el usuario en el AuthProvider
             if (context.mounted) {
@@ -170,13 +138,9 @@ class ProfileScreenState extends State<ProfileScreen> {
                           padding: const EdgeInsets.all(3),
                           child: CircleAvatar(
                             radius: 60,
-                            backgroundImage:
-                                user.photo != null
-                                    ? NetworkImage(
-                                      user.photo!,
-                                    ) // Usa user.photo
-                                    : null,
+                            backgroundImage: NetworkImage(user.photo),
                             child:
+                                // ignore: unnecessary_null_comparison
                                 user.photo == null
                                     ? Shimmer.fromColors(
                                       baseColor: Colors.grey[300]!,
@@ -240,8 +204,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                         style: TextStyle(fontSize: 12),
                       ),
                       subtitle: Text(
-                        user.lastName ??
-                            'No disponible', // <-- Usa user.lastName
+                        user.lastName, // <-- Usa user.lastName
                         style: subTitle,
                       ),
                     ),
@@ -261,7 +224,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                   cardPerfil(
                     subTitle,
                     "Numero de celular",
-                    user.phone ?? 'No disponible', // <-- Usa user.phone
+                    user.phone, // <-- Usa user.phone
                     Icons.phone_android,
                   ),
                   const SizedBox(height: 10),
@@ -269,7 +232,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                   cardPerfil(
                     subTitle,
                     "Dirección",
-                    user.address ?? 'No disponible', // <-- Usa user.address
+                    user.address, // <-- Usa user.address
                     Icons.place,
                   ),
                   const SizedBox(height: 10),
@@ -277,7 +240,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                   cardPerfil(
                     subTitle,
                     "Ciudad", // Corregí el typo "Ciudada" a "Ciudad"
-                    user.city ?? 'No disponible', // <-- Usa user.city
+                    user.city, // <-- Usa user.city
                     Icons.location_city,
                   ),
                   const SizedBox(height: 10),
@@ -285,7 +248,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                   cardPerfil(
                     subTitle,
                     "Barrio",
-                    user.barrio ?? 'No disponible', // <-- Usa user.barrio
+                    user.barrio, // <-- Usa user.barrio
                     Icons.map,
                   ),
                   const SizedBox(height: 30),
@@ -305,8 +268,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                   cardPerfil(
                     subTitle,
                     "Nombre o Razón Social", // Corregí el typo "Rozón" a "Razón"
-                    user.razonsocial ??
-                        'No disponible', // <-- Usa user.razonsocial
+                    user.razonsocial, // <-- Usa user.razonsocial
                     Icons.info,
                   ),
                   const SizedBox(height: 10),
@@ -321,7 +283,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                         style: TextStyle(fontSize: 12),
                       ),
                       subtitle: Text(
-                        user.ruc ?? 'No disponible', // <-- Usa user.ruc
+                        user.ruc, // <-- Usa user.ruc
                         style: subTitle,
                       ),
                     ),

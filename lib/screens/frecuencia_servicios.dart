@@ -1,9 +1,11 @@
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/model/solicitud_servicio_model.dart';
+import 'package:babyaid/model/usuario_model.dart';
+import 'package:babyaid/screens/elige_tu_helfer.dart';
+import 'package:babyaid/widget/title_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/model/solicitud_servicio_model.dart';
-import 'package:helfer/model/usuario_model.dart';
-import 'package:helfer/screens/elige_tu_helfer.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,39 +33,10 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
     return Scaffold(
       backgroundColor: AppColors.green,
       appBar: AppBar(
+        toolbarHeight: 100,
         automaticallyImplyLeading: false,
         leading: null,
-        toolbarHeight: 120,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(Icons.arrow_back),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: Image.asset('assets/logo-blanco.png', scale: 2.5),
-                ),
-              ],
-            ),
-            SizedBox(height: 25),
-            Text(
-              "¿Cuando vamos?",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 25),
-          ],
-        ),
-        backgroundColor: AppColors.green,
+        title: TitleAppbar(),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -78,6 +51,20 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
         ),
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "¿Cuando vamos?",
+                  style: GoogleFonts.quicksand(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
@@ -102,7 +89,7 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
                         children: [
                           SizedBox(width: 40),
                           Text(
-                            widget.ubicacion.callePrincipal,
+                            '${widget.ubicacion.callePrincipal} ${widget.ubicacion.numeracion}',
                             style: TextStyle(fontSize: 17),
                           ),
                         ],

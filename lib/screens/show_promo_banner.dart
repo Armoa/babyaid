@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:babyaid/services/fetch_active_banner.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/services/fetch_active_banner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void showPromoBanner(BuildContext context) async {

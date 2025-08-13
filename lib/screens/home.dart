@@ -1,21 +1,25 @@
 import 'dart:io';
 
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/model/servicios.dart';
+import 'package:babyaid/provider/auth_provider.dart' as local_auth_provider;
+import 'package:babyaid/provider/notificaciones_provider.dart';
+import 'package:babyaid/provider/personal_provider.dart';
+import 'package:babyaid/screens/care_screen.dart';
+import 'package:babyaid/screens/estado_cuenta.dart';
+import 'package:babyaid/screens/kids_screen.dart';
+import 'package:babyaid/screens/mis_servicios.dart';
+import 'package:babyaid/screens/my_acount.dart';
+import 'package:babyaid/screens/notification_screen.dart';
+import 'package:babyaid/screens/plus_screen.dart';
+import 'package:babyaid/screens/selector_ubicacion.dart';
+import 'package:babyaid/screens/show_promo_banner.dart';
+import 'package:babyaid/services/fetch_active_banner.dart';
+import 'package:babyaid/services/verificar_perfil_usuario.dart';
+import 'package:babyaid/widget/ventana_calificacion.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/model/servicios.dart';
-import 'package:helfer/provider/auth_provider.dart' as local_auth_provider;
-import 'package:helfer/screens/care_screen.dart';
-import 'package:helfer/screens/estado_cuenta.dart';
-import 'package:helfer/screens/kids_screen.dart';
-import 'package:helfer/screens/mis_servicios.dart';
-import 'package:helfer/screens/my_acount.dart';
-import 'package:helfer/screens/plus_screen.dart';
-import 'package:helfer/screens/selector_ubicacion.dart';
-import 'package:helfer/screens/show_promo_banner.dart';
-import 'package:helfer/services/fetch_active_banner.dart';
-import 'package:helfer/services/verificar_perfil_usuario.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -77,13 +81,42 @@ class _MyHomePageState extends State<MyHomePage> {
       initialPage: initialLoopIndex,
       viewportFraction: 0.45,
     );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       setState(() {});
+
+      final notificacionesProvider = Provider.of<NotificacionesProvider>(
+        context,
+        listen: false,
+      );
+      final authProvider = Provider.of<local_auth_provider.AuthProvider>(
+        context,
+        listen: false,
+      );
+
+      if (authProvider.user != null) {
+        final int usuarioId = authProvider.user!.id;
+        notificacionesProvider.obtenerNotificaciones(usuarioId);
+      }
+
+      final personalProvider = Provider.of<PersonalProvider>(
+        context,
+        listen: false,
+      );
+
+      final int? usuarioId = authProvider.user?.id;
+      if (usuarioId != null) {
+        await personalProvider.obtenerUltimoServicioFinalizado(usuarioId);
+        print('Servicio pendiente: ${personalProvider.servicioPendiente}');
+        if (personalProvider.servicioPendiente != null) {
+          mostrarCalificacion(context);
+        }
+      }
+      // Verifica si hay un banner activo al iniciar
+      _checkForPromoBanner();
+      // Vefifica y el usuario completo su perfil
+      verificarPerfilUsuario(context);
     });
-    // Verifica si hay un banner activo al iniciar
-    _checkForPromoBanner();
-    // Vefifica y el usuario completo su perfil
-    verificarPerfilUsuario(context);
   }
 
   // POPUP BANNER
@@ -192,13 +225,54 @@ class HomeMainScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                InkWell(
-                  onTap: () {
+                IconButton(
+                  onPressed: () {
                     exit(0);
                   },
-                  child: Icon(Icons.arrow_back),
+                  icon: Icon(Iconsax.arrow_left_copy),
+                ),
+
+                Stack(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NotificationScreen(),
+                          ),
+                        );
+                      },
+                      icon: Icon(Iconsax.notification_bing_copy),
+                    ),
+                    Positioned(
+                      bottom: 5,
+                      right: 5,
+                      child: Consumer<NotificacionesProvider>(
+                        builder: (context, notificacionesProvider, child) {
+                          return Visibility(
+                            visible: notificacionesProvider.totalNoLeidas > 0,
+                            child: Container(
+                              padding: EdgeInsets.all(1),
+                              alignment: Alignment.center,
+                              width: 16,
+                              height: 16,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.red,
+                              ),
+                              child: Text(
+                                '${notificacionesProvider.totalNoLeidas}',
+                                style: TextStyle(fontSize: 9),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

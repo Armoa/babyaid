@@ -1,7 +1,7 @@
+import 'package:babyaid/services/version.dart';
+import 'package:babyaid/widget/wrapper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/services/version.dart';
-import 'package:helfer/widget/wrapper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SplashScreen extends StatefulWidget {

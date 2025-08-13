@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/model/personal_model.dart';
+import 'package:babyaid/model/solicitud_servicio_model.dart';
+import 'package:babyaid/screens/pago_facturacion.dart';
+import 'package:babyaid/widget/title_appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/model/personal_model.dart';
-import 'package:helfer/model/solicitud_servicio_model.dart';
-import 'package:helfer/screens/pago_facturacion.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -57,41 +59,12 @@ class _ElegirHerferState extends State<ElegirHerfer> {
     return Scaffold(
       backgroundColor: AppColors.green,
       appBar: AppBar(
+        toolbarHeight: 100,
         automaticallyImplyLeading: false,
         leading: null,
-        toolbarHeight: 120,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(Icons.arrow_back),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: Image.asset('assets/logo-blanco.png', scale: 2.5),
-                ),
-              ],
-            ),
-            SizedBox(height: 25),
-            Text(
-              "¿Elegí a tu Helfer",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 25),
-          ],
-        ),
-
-        backgroundColor: AppColors.green,
+        title: TitleAppbar(),
       ),
+
       body: Container(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(
@@ -107,6 +80,19 @@ class _ElegirHerferState extends State<ElegirHerfer> {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "¿Elegí a tu personal?",
+                    style: GoogleFonts.quicksand(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: 20),
               Expanded(
                 child: FutureBuilder<List<PersonalModel>>(

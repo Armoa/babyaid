@@ -1,7 +1,7 @@
+import 'package:babyaid/model/colors.dart';
+import 'package:babyaid/services/fetch_product.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:helfer/model/colors.dart';
-import 'package:helfer/services/fetch_product.dart';
 
 class BrandBox extends StatefulWidget {
   const BrandBox({super.key});
