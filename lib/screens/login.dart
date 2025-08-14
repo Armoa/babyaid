@@ -1,13 +1,13 @@
 import 'dart:io';
 
+import 'package:bebito/model/colors.dart';
+import 'package:bebito/provider/auth_provider.dart';
+import 'package:bebito/screens/home.dart';
+import 'package:bebito/screens/perfil_update.dart';
+import 'package:bebito/screens/register_user.dart';
+import 'package:bebito/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:babyaid/model/colors.dart';
-import 'package:babyaid/provider/auth_provider.dart';
-import 'package:babyaid/screens/home.dart';
-import 'package:babyaid/screens/perfil_update.dart';
-import 'package:babyaid/screens/register_user.dart';
-import 'package:babyaid/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -92,7 +92,7 @@ class LoginScreenState extends State<LoginScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(20),
-                    child: Image.asset("assets/logo.png", scale: 2.7),
+                    child: Image.asset("assets/logo.png", scale: 3),
                   ),
 
                   const SizedBox(height: 50.0),

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:babyaid/model/card_model.dart';
-import 'package:babyaid/provider/cart_provider.dart';
-import 'package:babyaid/provider/cupon_provider.dart';
+import 'package:bebito/model/card_model.dart';
+import 'package:bebito/provider/cart_provider.dart';
+import 'package:bebito/provider/cupon_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';

@@ -1,9 +1,9 @@
-import 'package:babyaid/model/colors.dart';
-import 'package:babyaid/model/usuario_model.dart';
-import 'package:babyaid/provider/auth_provider.dart';
-import 'package:babyaid/screens/home.dart';
-import 'package:babyaid/screens/login.dart';
-import 'package:babyaid/services/perfil_service.dart';
+import 'package:bebito/model/colors.dart';
+import 'package:bebito/model/usuario_model.dart';
+import 'package:bebito/provider/auth_provider.dart';
+import 'package:bebito/screens/home.dart';
+import 'package:bebito/screens/login.dart';
+import 'package:bebito/services/perfil_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';

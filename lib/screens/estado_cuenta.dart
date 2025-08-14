@@ -1,9 +1,9 @@
-import 'package:babyaid/model/colors.dart';
-import 'package:babyaid/provider/auth_provider.dart' as local_auth_provider;
-import 'package:babyaid/provider/auth_provider.dart';
-import 'package:babyaid/services/fetch_order_detalles.dart';
-import 'package:babyaid/services/functions.dart';
-import 'package:babyaid/widget/title_appbar.dart';
+import 'package:bebito/model/colors.dart';
+import 'package:bebito/provider/auth_provider.dart' as local_auth_provider;
+import 'package:bebito/provider/auth_provider.dart';
+import 'package:bebito/services/fetch_order_detalles.dart';
+import 'package:bebito/services/functions.dart';
+import 'package:bebito/widget/title_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:intl/intl.dart';

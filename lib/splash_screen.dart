@@ -1,5 +1,5 @@
-import 'package:babyaid/services/version.dart';
-import 'package:babyaid/widget/wrapper.dart';
+import 'package:bebito/services/version.dart';
+import 'package:bebito/widget/wrapper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';

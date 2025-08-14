@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:babyaid/model/cupon_model.dart';
+import 'package:bebito/model/cupon_model.dart';
 import 'package:http/http.dart' as http;
 
 Future<List<ProductoConCupon>> fetchProductosConCupon() async {

@@ -1,51 +1,64 @@
 {
   "project_info": {
-    "project_number": "1031927211632",
-    "project_id": "helfer-b1d14",
-    "storage_bucket": "helfer-b1d14.firebasestorage.app"
+    "project_number": "486357709819",
+    "project_id": "babyaid-fbb73",
+    "storage_bucket": "babyaid-fbb73.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1031927211632:android:204cc252c1db537ba4f6b5",
+        "mobilesdk_app_id": "1:486357709819:android:f20f9f24361d192512115e",
         "android_client_info": {
-          "package_name": "com.helfer.app"
+          "package_name": "com.babito.app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "1031927211632-1c46cjqdii8n1kf06io6g7luga8rb9mn.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.helfer.app",
-            "certificate_hash": "b893a927edfe71d2ad5d8365abcdfd6df980869d"
-          }
-        },
-        {
-          "client_id": "1031927211632-mis7a2jqdb436ac2mniqf95q0ugogq0h.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD415NXUn7-0bDvEXw-NGv2OemsU7js6M8"
+          "current_key": "AIzaSyAY0aRC155ER4_wv7F0apN_zVtvNyq3DsE"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1031927211632-mis7a2jqdb436ac2mniqf95q0ugogq0h.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "1031927211632-cftdshecbmhvj6t76gocpkuul6fb1uk3.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.helfer"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486357709819:android:238a26244f4539b412115e",
+        "android_client_info": {
+          "package_name": "com.babyaid.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAY0aRC155ER4_wv7F0apN_zVtvNyq3DsE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486357709819:android:5bb131ac9890be3012115e",
+        "android_client_info": {
+          "package_name": "com.bebito.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAY0aRC155ER4_wv7F0apN_zVtvNyq3DsE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
         }
       }
     }

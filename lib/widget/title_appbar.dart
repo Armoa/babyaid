@@ -1,6 +1,6 @@
-import 'package:babyaid/provider/notificaciones_provider.dart';
-import 'package:babyaid/screens/home.dart';
-import 'package:babyaid/screens/notification_screen.dart';
+import 'package:bebito/provider/notificaciones_provider.dart';
+import 'package:bebito/screens/home.dart';
+import 'package:bebito/screens/notification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:provider/provider.dart';

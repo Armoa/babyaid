@@ -1,5 +1,5 @@
-import 'package:babyaid/model/cupon_model.dart';
-import 'package:babyaid/services/get_cupones.dart';
+import 'package:bebito/model/cupon_model.dart';
+import 'package:bebito/services/get_cupones.dart';
 import 'package:flutter/material.dart';
 
 class CuponProvider with ChangeNotifier {

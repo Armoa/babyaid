@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  static const Color grisOscuro = Color.fromARGB(255, 88, 111, 125);
+  static const Color grisClaro = Color.fromARGB(255, 168, 178, 180);
+  static const Color rosadoPastel = Color.fromARGB(255, 240, 213, 204);
+  static const Color blancoLight = Color.fromARGB(255, 250, 250, 250);
+
   static const Color blueLight = Color.fromARGB(255, 165, 189, 222);
   static const Color blueAcua = Color.fromARGB(255, 62, 189, 222);
   static const Color blueSky = Color.fromARGB(255, 0, 153, 255);

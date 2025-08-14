@@ -1,4 +1,4 @@
-package com.babyaid.app
+package com.bebito.app
 
 import io.flutter.embedding.android.FlutterActivity
 

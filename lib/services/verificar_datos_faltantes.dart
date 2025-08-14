@@ -1,4 +1,4 @@
-import 'package:babyaid/model/usuario_model.dart';
+import 'package:bebito/model/usuario_model.dart';
 
 List<String> verificarDatosFaltantes(UsuarioModel usuario) {
   List<String> datosFaltantes = [];

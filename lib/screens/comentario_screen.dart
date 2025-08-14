@@ -1,5 +1,5 @@
-import 'package:babyaid/model/colors.dart';
-import 'package:babyaid/model/personal_model.dart';
+import 'package:bebito/model/colors.dart';
+import 'package:bebito/model/personal_model.dart';
 import 'package:flutter/material.dart';
 
 // Comentario y Reseñas sobre el Personal de limpieza

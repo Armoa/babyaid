@@ -1,4 +1,4 @@
-import 'package:babyaid/model/product_model.dart';
+import 'package:bebito/model/product_model.dart';
 
 class Cupon {
   final int id;

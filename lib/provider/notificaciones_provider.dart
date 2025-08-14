@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:babyaid/model/notification.dart';
+import 'package:bebito/model/notification.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

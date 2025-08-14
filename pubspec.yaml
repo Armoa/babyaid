@@ -1,4 +1,4 @@
-name: babyaid
+name: bebito
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -113,17 +113,17 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
 flutter_native_splash:
-  color: "#52B68D"
+  color: "#A8B2B4"
   image: "assets/logo-light.png"
 
   android_12:
     image: "assets/logo-light.png"
-    color: "#52B68D"
-    icon_background_color: "#52B68D"
+    color: "#A8B2B4"
+    icon_background_color: "#A8B2B4"
     
     image_dark: "assets/logo-dark.png"
-    color_dark: "#52B68D"
-    icon_background_color_dark: "#52B68D"
+    color_dark: "#586F7D"
+    icon_background_color_dark: "#586F7D"
 
 flutter_icons:
   android: true

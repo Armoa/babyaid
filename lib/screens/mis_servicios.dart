@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-import 'package:babyaid/model/colors.dart';
-import 'package:babyaid/model/personal_model.dart';
-import 'package:babyaid/provider/auth_provider.dart' as local_auth_provider;
-import 'package:babyaid/provider/auth_provider.dart';
-import 'package:babyaid/provider/personal_provider.dart';
-import 'package:babyaid/screens/perfil_personal_screen2.dart';
-import 'package:babyaid/services/fetch_order_detalles.dart';
-import 'package:babyaid/services/functions.dart';
-import 'package:babyaid/services/get_calificacion.dart';
-import 'package:babyaid/widget/title_appbar.dart';
-import 'package:babyaid/widget/ventana_calificacion.dart';
+import 'package:bebito/model/colors.dart';
+import 'package:bebito/model/personal_model.dart';
+import 'package:bebito/provider/auth_provider.dart' as local_auth_provider;
+import 'package:bebito/provider/auth_provider.dart';
+import 'package:bebito/provider/personal_provider.dart';
+import 'package:bebito/screens/perfil_personal_screen2.dart';
+import 'package:bebito/services/fetch_order_detalles.dart';
+import 'package:bebito/services/functions.dart';
+import 'package:bebito/services/get_calificacion.dart';
+import 'package:bebito/widget/title_appbar.dart';
+import 'package:bebito/widget/ventana_calificacion.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;

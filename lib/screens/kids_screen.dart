@@ -1,4 +1,4 @@
-import 'package:babyaid/model/colors.dart';
+import 'package:bebito/model/colors.dart';
 import 'package:flutter/material.dart';
 
 class KidsScreen extends StatelessWidget {

@@ -1,5 +1,5 @@
-import 'package:babyaid/model/colors.dart';
-import 'package:babyaid/provider/personal_provider.dart';
+import 'package:bebito/model/colors.dart';
+import 'package:bebito/provider/personal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

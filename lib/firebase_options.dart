@@ -47,19 +47,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD415NXUn7-0bDvEXw-NGv2OemsU7js6M8',
-    appId: '1:1031927211632:android:204cc252c1db537ba4f6b5',
-    messagingSenderId: '1031927211632',
-    projectId: 'helfer-b1d14',
-    storageBucket: 'helfer-b1d14.firebasestorage.app',
+    apiKey: 'AIzaSyAY0aRC155ER4_wv7F0apN_zVtvNyq3DsE',
+    appId: '1:486357709819:android:5bb131ac9890be3012115e',
+    messagingSenderId: '486357709819',
+    projectId: 'babyaid-fbb73',
+    storageBucket: 'babyaid-fbb73.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBU3_K4ZSSkacxLGEwKimrfkiozEEgD8KA',
-    appId: '1:1031927211632:ios:bf6b87f18dc0b55fa4f6b5',
-    messagingSenderId: '1031927211632',
-    projectId: 'helfer-b1d14',
-    storageBucket: 'helfer-b1d14.firebasestorage.app',
+    apiKey: 'AIzaSyD2kpDZ2E_dq_D3sqxxF01z-UcsFupSRGI',
+    appId: '1:486357709819:ios:c336529e5b9480d512115e',
+    messagingSenderId: '486357709819',
+    projectId: 'babyaid-fbb73',
+    storageBucket: 'babyaid-fbb73.firebasestorage.app',
     iosBundleId: 'com.example.helfer',
   );
 

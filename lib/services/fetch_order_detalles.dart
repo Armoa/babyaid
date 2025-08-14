@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:babyaid/model/orders_model.dart';
-import 'package:babyaid/model/personal_model.dart';
+import 'package:bebito/model/orders_model.dart';
+import 'package:bebito/model/personal_model.dart';
 import 'package:http/http.dart' as http;
 
 class OrderDetalle {

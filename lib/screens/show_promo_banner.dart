@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:babyaid/services/fetch_active_banner.dart';
+import 'package:bebito/services/fetch_active_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

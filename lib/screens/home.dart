@@ -1,22 +1,22 @@
 import 'dart:io';
 
-import 'package:babyaid/model/colors.dart';
-import 'package:babyaid/model/servicios.dart';
-import 'package:babyaid/provider/auth_provider.dart' as local_auth_provider;
-import 'package:babyaid/provider/notificaciones_provider.dart';
-import 'package:babyaid/provider/personal_provider.dart';
-import 'package:babyaid/screens/care_screen.dart';
-import 'package:babyaid/screens/estado_cuenta.dart';
-import 'package:babyaid/screens/kids_screen.dart';
-import 'package:babyaid/screens/mis_servicios.dart';
-import 'package:babyaid/screens/my_acount.dart';
-import 'package:babyaid/screens/notification_screen.dart';
-import 'package:babyaid/screens/plus_screen.dart';
-import 'package:babyaid/screens/selector_ubicacion.dart';
-import 'package:babyaid/screens/show_promo_banner.dart';
-import 'package:babyaid/services/fetch_active_banner.dart';
-import 'package:babyaid/services/verificar_perfil_usuario.dart';
-import 'package:babyaid/widget/ventana_calificacion.dart';
+import 'package:bebito/model/colors.dart';
+import 'package:bebito/model/servicios.dart';
+import 'package:bebito/provider/auth_provider.dart' as local_auth_provider;
+import 'package:bebito/provider/notificaciones_provider.dart';
+import 'package:bebito/provider/personal_provider.dart';
+import 'package:bebito/screens/care_screen.dart';
+import 'package:bebito/screens/estado_cuenta.dart';
+import 'package:bebito/screens/kids_screen.dart';
+import 'package:bebito/screens/mis_servicios.dart';
+import 'package:bebito/screens/my_acount.dart';
+import 'package:bebito/screens/notification_screen.dart';
+import 'package:bebito/screens/plus_screen.dart';
+import 'package:bebito/screens/selector_ubicacion.dart';
+import 'package:bebito/screens/show_promo_banner.dart';
+import 'package:bebito/services/fetch_active_banner.dart';
+import 'package:bebito/services/verificar_perfil_usuario.dart';
+import 'package:bebito/widget/ventana_calificacion.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
@@ -182,8 +182,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ],
-          color: AppColors.green,
-          buttonBackgroundColor: AppColors.greenDark,
+          color: AppColors.grisOscuro,
+          buttonBackgroundColor: AppColors.rosadoPastel,
           backgroundColor: Colors.white,
 
           animationCurve: Curves.easeInOut,
@@ -217,7 +217,7 @@ class HomeMainScreen extends StatelessWidget {
     final nombre = authProvider.user?.name ?? 'Usuario';
 
     return Scaffold(
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.grisOscuro,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: null,
@@ -325,7 +325,7 @@ class HomeMain extends StatelessWidget {
         ),
         color:
             Theme.of(context).brightness == Brightness.dark
-                ? AppColors.blueBlak
+                ? AppColors.grisClaro
                 : Colors.white,
       ),
       child: PageView.builder(

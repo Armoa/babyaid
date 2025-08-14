@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:babyaid/model/colors.dart';
-import 'package:babyaid/screens/login.dart';
+import 'package:bebito/model/colors.dart';
+import 'package:bebito/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 

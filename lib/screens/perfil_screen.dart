@@ -1,7 +1,7 @@
-import 'package:babyaid/model/colors.dart';
-import 'package:babyaid/model/usuario_model.dart';
-import 'package:babyaid/provider/auth_provider.dart';
-import 'package:babyaid/screens/perfil_update.dart';
+import 'package:bebito/model/colors.dart';
+import 'package:bebito/model/usuario_model.dart';
+import 'package:bebito/provider/auth_provider.dart';
+import 'package:bebito/screens/perfil_update.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';

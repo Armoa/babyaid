@@ -1,6 +1,6 @@
-import 'package:babyaid/provider/auth_provider.dart';
-import 'package:babyaid/screens/home.dart';
-import 'package:babyaid/screens/login.dart';
+import 'package:bebito/provider/auth_provider.dart';
+import 'package:bebito/screens/home.dart';
+import 'package:bebito/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

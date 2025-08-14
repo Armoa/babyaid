@@ -1,5 +1,5 @@
-import 'package:babyaid/provider/auth_provider.dart' as local_auth_provider;
-import 'package:babyaid/screens/login.dart';
+import 'package:bebito/provider/auth_provider.dart' as local_auth_provider;
+import 'package:bebito/screens/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';

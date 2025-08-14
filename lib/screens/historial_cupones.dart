@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:babyaid/model/colors.dart';
-import 'package:babyaid/provider/auth_provider.dart';
-import 'package:babyaid/services/functions.dart';
+import 'package:bebito/model/colors.dart';
+import 'package:bebito/provider/auth_provider.dart';
+import 'package:bebito/services/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';

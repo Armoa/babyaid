@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:babyaid/screens/home.dart';
-import 'package:babyaid/screens/perfil_update.dart';
+import 'package:bebito/screens/home.dart';
+import 'package:bebito/screens/perfil_update.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
