@@ -57,7 +57,7 @@ class _ElegirHerferState extends State<ElegirHerfer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(
         toolbarHeight: 100,
         automaticallyImplyLeading: false,
@@ -73,7 +73,7 @@ class _ElegirHerferState extends State<ElegirHerfer> {
           ),
           color:
               Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.blueBlak
+                  ? Colors.black87
                   : Colors.white,
         ),
         child: Padding(
@@ -219,7 +219,7 @@ class _ElegirHerferState extends State<ElegirHerfer> {
                     Icon(
                       Icons.access_time_outlined,
                       size: 16,
-                      color: AppColors.green,
+                      color: AppColors.primario,
                     ),
                     SizedBox(width: 8),
                     Text(

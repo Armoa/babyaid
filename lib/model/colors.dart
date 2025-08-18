@@ -1,24 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color grisOscuro = Color.fromARGB(255, 88, 111, 125);
-  static const Color grisClaro = Color.fromARGB(255, 168, 178, 180);
-  static const Color rosadoPastel = Color.fromARGB(255, 240, 213, 204);
-  static const Color blancoLight = Color.fromARGB(255, 250, 250, 250);
-
-  static const Color blueLight = Color.fromARGB(255, 165, 189, 222);
-  static const Color blueAcua = Color.fromARGB(255, 62, 189, 222);
-  static const Color blueSky = Color.fromARGB(255, 0, 153, 255);
-  static const Color blueDark = Color.fromARGB(255, 0, 33, 107);
-  static const Color blueBlak = Color.fromARGB(255, 38, 48, 72);
-  static const Color graySoft = Color.fromARGB(255, 79, 93, 128);
-  static const Color grayLight = Color.fromARGB(255, 230, 231, 231);
-  static const Color grayDark = Color.fromARGB(255, 55, 55, 55);
-  static const Color white = Color.fromARGB(255, 255, 255, 255);
-  static const Color green = Color.fromARGB(255, 82, 182, 141);
-  static const Color greenDark = Color.fromARGB(255, 2, 82, 6);
-  static const Color greenLight = Color.fromARGB(255, 215, 247, 232);
-  static const Color greenStandar = Color.fromARGB(255, 50, 186, 120);
+  static const Color primario = Color.fromARGB(255, 30, 200, 200);
+  static const Color secundario = Color.fromARGB(255, 10, 130, 130);
+  static const Color terciario = Color.fromARGB(255, 240, 190, 210);
+  static const Color extra = Color.fromARGB(255, 30, 200, 200);
+  static const Color black = Color.fromARGB(255, 25, 25, 25);
 }
 
 List<Color> backgroundColors = [

@@ -159,7 +159,7 @@ class _AddressScreenState extends State<AddressScreen> {
                   Expanded(
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.green,
+                        backgroundColor: AppColors.primario,
                       ),
                       onPressed: () {
                         Navigator.push(
@@ -172,11 +172,11 @@ class _AddressScreenState extends State<AddressScreen> {
                       icon: const Icon(
                         Icons.add_circle_outline,
                         size: 24,
-                        color: AppColors.white,
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Agregar nueva dirección',
-                        style: TextStyle(color: AppColors.white, fontSize: 16),
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
                   ),

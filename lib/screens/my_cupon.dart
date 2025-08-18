@@ -58,9 +58,9 @@ class CuponesScreenState extends State<CuponesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blueLight,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(
-        backgroundColor: AppColors.blueLight,
+        backgroundColor: AppColors.primario,
         surfaceTintColor: Colors.transparent,
         title: Column(
           children: [

@@ -7,7 +7,7 @@ class CareScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: null,
@@ -50,7 +50,7 @@ class CareScreen extends StatelessWidget {
           ),
           color:
               Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.blueBlak
+                  ? Colors.black87
                   : Colors.white,
         ),
         child: Expanded(

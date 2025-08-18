@@ -55,9 +55,9 @@ class HistorialCuponesPageState extends State<HistorialCuponesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blueLight,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(
-        backgroundColor: AppColors.blueLight,
+        backgroundColor: AppColors.primario,
         surfaceTintColor: Colors.transparent,
         title: Text('Historial de utilizados'),
       ),

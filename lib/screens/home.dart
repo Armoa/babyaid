@@ -182,8 +182,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ],
-          color: AppColors.grisOscuro,
-          buttonBackgroundColor: AppColors.rosadoPastel,
+          color: AppColors.secundario,
+          buttonBackgroundColor: AppColors.primario,
           backgroundColor: Colors.white,
 
           animationCurve: Curves.easeInOut,
@@ -217,7 +217,7 @@ class HomeMainScreen extends StatelessWidget {
     final nombre = authProvider.user?.name ?? 'Usuario';
 
     return Scaffold(
-      backgroundColor: AppColors.grisOscuro,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: null,
@@ -325,7 +325,7 @@ class HomeMain extends StatelessWidget {
         ),
         color:
             Theme.of(context).brightness == Brightness.dark
-                ? AppColors.grisClaro
+                ? AppColors.secundario
                 : Colors.white,
       ),
       child: PageView.builder(

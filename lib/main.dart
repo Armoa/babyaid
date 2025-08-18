@@ -1,3 +1,4 @@
+import 'package:bebito/onboarding.dart';
 import 'package:bebito/provider/auth_provider.dart' as app_auth;
 import 'package:bebito/provider/auth_provider.dart' as local_auth;
 import 'package:bebito/provider/cart_provider.dart';
@@ -11,7 +12,6 @@ import 'package:bebito/services/auth_service.dart';
 import 'package:bebito/services/firebase_messaging_service.dart';
 import 'package:bebito/services/http_client.dart';
 import 'package:bebito/services/notificaction.dart';
-import 'package:bebito/splash_screen.dart';
 import 'package:bebito/widget/theme_mode.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
       themeMode: themeProvider.themeMode,
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: const SplashScreen(),
+      home: const OnBoarding(),
       routes: {
         'MyHomePage': (context) => const MyHomePage(),
         'login': (context) => LoginScreen(),

@@ -162,7 +162,7 @@ class SplashScreenState extends State<SplashScreen> {
                   },
                   child: const Icon(
                     Icons.wifi_off,
-                    size: 80,
+                    size: 120,
                     color: Colors.grey,
                   ),
                 ),

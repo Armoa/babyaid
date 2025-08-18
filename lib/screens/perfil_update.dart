@@ -209,7 +209,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(title: const Text("Actualizar perfil")),
       body: Container(
         decoration: const BoxDecoration(
@@ -236,7 +236,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                         width: 14,
                         height: 14,
                         decoration: BoxDecoration(
-                          color: AppColors.grayDark,
+                          color: AppColors.secundario,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -246,12 +246,15 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.grayDark,
+                          color: AppColors.secundario,
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: Container(height: 2, color: AppColors.grayDark),
+                        child: Container(
+                          height: 2,
+                          color: AppColors.secundario,
+                        ),
                       ),
                     ],
                   ),
@@ -442,7 +445,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                         width: 14,
                         height: 14,
                         decoration: BoxDecoration(
-                          color: AppColors.grayDark,
+                          color: AppColors.secundario,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -452,12 +455,15 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.grayDark,
+                          color: AppColors.secundario,
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: Container(height: 2, color: AppColors.grayDark),
+                        child: Container(
+                          height: 2,
+                          color: AppColors.secundario,
+                        ),
                       ),
                     ],
                   ),
@@ -521,7 +527,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                         width: 14,
                         height: 14,
                         decoration: BoxDecoration(
-                          color: AppColors.grayDark,
+                          color: AppColors.secundario,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -531,12 +537,15 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.grayDark,
+                          color: AppColors.secundario,
                         ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: Container(height: 2, color: AppColors.grayDark),
+                        child: Container(
+                          height: 2,
+                          color: AppColors.secundario,
+                        ),
                       ),
                     ],
                   ),
@@ -585,7 +594,7 @@ class PerfilUpdateState extends State<PerfilUpdate> {
                       Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.green,
+                            backgroundColor: AppColors.primario,
                           ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {

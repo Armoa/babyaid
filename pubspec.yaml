@@ -59,6 +59,7 @@ dependencies:
   curved_labeled_navigation_bar: ^2.0.6
   iconsax_flutter: ^1.0.1
   dio: ^5.8.0+1
+  smooth_page_indicator: ^1.2.1
 
 dev_dependencies:
   flutter_test:
@@ -113,17 +114,17 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
 flutter_native_splash:
-  color: "#A8B2B4"
+  color: "#1EC8C8"
   image: "assets/logo-light.png"
 
   android_12:
     image: "assets/logo-light.png"
-    color: "#A8B2B4"
-    icon_background_color: "#A8B2B4"
+    color: "#1EC8C8"
+    icon_background_color: "#1EC8C8"
     
     image_dark: "assets/logo-dark.png"
-    color_dark: "#586F7D"
-    icon_background_color_dark: "#586F7D"
+    color_dark: "#0A8282"
+    icon_background_color_dark: "#0A8282"
 
 flutter_icons:
   android: true

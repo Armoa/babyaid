@@ -81,7 +81,7 @@ class _EstadoCuentaState extends State<EstadoCuenta> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(toolbarHeight: 100, title: TitleAppbar()),
       body: Container(
         decoration: const BoxDecoration(
@@ -284,8 +284,8 @@ class _EstadoCuentaState extends State<EstadoCuenta> {
 
                                 child: Text(
                                   '₲ ${numberFormat(order.total.toString())}',
-                                  style: const TextStyle(
-                                    color: AppColors.grayDark,
+                                  style: TextStyle(
+                                    color: AppColors.secundario,
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),

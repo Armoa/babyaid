@@ -14,7 +14,7 @@ Future<String?> _mostrarCampoComentario(
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    backgroundColor: AppColors.white,
+    backgroundColor: Colors.white,
     builder: (BuildContext bc) {
       return Padding(
         padding: EdgeInsets.only(
@@ -67,7 +67,7 @@ Future<String?> _mostrarCampoComentario(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           elevation: 0,
-                          backgroundColor: AppColors.green,
+                          backgroundColor: AppColors.primario,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                             side: BorderSide.none,
@@ -153,7 +153,7 @@ void mostrarCalificacion(BuildContext context) {
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    backgroundColor: AppColors.white,
+    backgroundColor: Colors.white,
     builder: (BuildContext bc) {
       // Usamos Consumer para escuchar los cambios en el provider
       return Consumer<PersonalProvider>(
@@ -270,20 +270,20 @@ void mostrarCalificacion(BuildContext context) {
                                   label: Text(sugerencia),
                                   backgroundColor:
                                       isSelected
-                                          ? AppColors.greenLight
-                                          : AppColors.grayLight,
+                                          ? AppColors.primario
+                                          : AppColors.secundario,
                                   side: BorderSide(
                                     width: 2,
                                     color:
                                         isSelected
-                                            ? AppColors.greenStandar
+                                            ? AppColors.primario
                                             : Colors.transparent,
                                   ),
                                   labelStyle: TextStyle(
                                     color:
                                         isSelected
-                                            ? AppColors.greenStandar
-                                            : AppColors.grayDark,
+                                            ? AppColors.primario
+                                            : AppColors.secundario,
                                   ),
                                   onPressed: () {
                                     // Llama al método del Provider para cambiar el estado
@@ -301,27 +301,27 @@ void mostrarCalificacion(BuildContext context) {
                                       size: 18,
                                       color:
                                           provider.comentario.isNotEmpty
-                                              ? AppColors.greenStandar
-                                              : AppColors.grayDark,
+                                              ? AppColors.primario
+                                              : AppColors.secundario,
                                     ),
                                     label: Text(
                                       'Deja un comentario',
                                       style: TextStyle(
                                         color:
                                             provider.comentario.isNotEmpty
-                                                ? AppColors.greenStandar
-                                                : AppColors.grayDark,
+                                                ? AppColors.primario
+                                                : AppColors.secundario,
                                       ),
                                     ),
                                     backgroundColor:
                                         provider.comentario.isNotEmpty
-                                            ? AppColors.greenLight
-                                            : AppColors.grayLight,
+                                            ? AppColors.primario
+                                            : AppColors.secundario,
                                     side: BorderSide(
                                       width: 2,
                                       color:
                                           provider.comentario.isNotEmpty
-                                              ? AppColors.greenStandar
+                                              ? AppColors.primario
                                               : Colors.transparent,
                                     ),
                                     onPressed: () async {
@@ -351,7 +351,7 @@ void mostrarCalificacion(BuildContext context) {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
-                                backgroundColor: AppColors.green,
+                                backgroundColor: AppColors.primario,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   side: BorderSide.none,

@@ -80,7 +80,7 @@ class _MyAcountState extends State<MyAcount> {
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
           ),
-          color: AppColors.white,
+          color: Colors.white,
         ),
         child: SingleChildScrollView(
           // Por si el contenido es más largo que la pantalla
@@ -107,7 +107,7 @@ class _MyAcountState extends State<MyAcount> {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(52.0),
-                        border: Border.all(color: AppColors.blueSky, width: 2),
+                        border: Border.all(color: AppColors.primario, width: 2),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(3),
@@ -163,7 +163,7 @@ class _MyAcountState extends State<MyAcount> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.green,
+                          backgroundColor: AppColors.primario,
                         ),
                         onPressed: () async {
                           await logoutUser(context);
@@ -190,7 +190,7 @@ class _MyAcountState extends State<MyAcount> {
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.greenDark,
+                          backgroundColor: AppColors.primario,
                         ),
                         onPressed: () async {
                           final uri = Uri.parse(

@@ -27,7 +27,7 @@ class _PerfilPersonalScreenState extends State<PerfilPersonalScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
-        iconTheme: IconThemeData(color: AppColors.green),
+        iconTheme: IconThemeData(color: AppColors.primario),
       ),
 
       body: Center(

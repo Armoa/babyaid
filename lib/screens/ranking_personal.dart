@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:bebito/model/colors.dart';
 import 'package:bebito/model/personal_model.dart';
 import 'package:bebito/screens/comentario_screen.dart';
 import 'package:bebito/screens/perfil_personal_screen.dart';
@@ -68,7 +67,7 @@ class _RankingPersonalScreenState extends State<RankingPersonalScreen> {
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
           ),
-          color: AppColors.white,
+          color: Colors.white,
         ),
         child: Column(
           children: [

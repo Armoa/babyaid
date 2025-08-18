@@ -210,7 +210,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(
         toolbarHeight: 100,
         automaticallyImplyLeading: false,
@@ -252,7 +252,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
       //     ],
       //   ),
 
-      //   backgroundColor: AppColors.green,
+      //   backgroundColor: AppColors.primario,
       // ),
       body: Container(
         decoration: BoxDecoration(
@@ -262,7 +262,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
           ),
           color:
               Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.blueBlak
+                  ? AppColors.black
                   : Colors.white,
         ),
         child: Column(
@@ -340,7 +340,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                                 Icon(
                                   Icons.access_time_outlined,
                                   size: 16,
-                                  color: AppColors.green,
+                                  color: AppColors.primario,
                                 ),
                                 SizedBox(width: 8),
                                 Text(
@@ -464,14 +464,14 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                                 textoIzquierdo: "Horas:",
                                 textoDerecho:
                                     '${widget.solicitud.duracionHoras}',
-                                colorFondo: AppColors.grayLight,
+                                colorFondo: AppColors.primario,
                                 fontSize: 14,
                               ),
 
                               DatoEnDosColumnas(
                                 textoIzquierdo: "Frecuencia:",
                                 textoDerecho: widget.solicitud.frecuencia,
-                                colorFondo: AppColors.white,
+                                colorFondo: Colors.white,
                                 fontSize: 14,
                               ),
 
@@ -482,7 +482,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                                         .format(widget.solicitud.fecha)
                                         .toString()
                                         .capitalizeFirst(),
-                                colorFondo: AppColors.grayLight,
+                                colorFondo: AppColors.primario,
                                 fontSize: 12,
                               ),
 
@@ -490,7 +490,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                                 textoIzquierdo: "Horarios:",
                                 textoDerecho:
                                     '${widget.solicitud.rangoHorario.start.round()}:00 a ${widget.solicitud.rangoHorario.end.round()}:00',
-                                colorFondo: AppColors.white,
+                                colorFondo: Colors.white,
                                 fontSize: 14,
                               ),
 
@@ -498,7 +498,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                                 textoIzquierdo: "Ubicación:",
                                 textoDerecho:
                                     widget.solicitud.ubicacion.nombreUbicacion,
-                                colorFondo: AppColors.grayLight,
+                                colorFondo: AppColors.primario,
                                 fontSize: 14,
                               ),
 
@@ -506,7 +506,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                                 textoIzquierdo: "Costo diario:",
                                 textoDerecho:
                                     '₲. ${numberFormat(costoTotal.toStringAsFixed(0))}',
-                                colorFondo: AppColors.white,
+                                colorFondo: Colors.white,
                                 fontSize: 14,
                               ),
 
@@ -531,7 +531,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                               Expanded(
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.green,
+                                    backgroundColor: AppColors.primario,
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 12.0,
                                     ),
@@ -574,7 +574,7 @@ class _PagoFacturacionState extends State<PagoFacturacion> {
                                     'Enviar Pedido',
                                     style: TextStyle(
                                       fontSize: 18,
-                                      color: AppColors.white,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),

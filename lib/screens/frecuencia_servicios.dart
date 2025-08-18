@@ -31,7 +31,7 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(
         toolbarHeight: 100,
         automaticallyImplyLeading: false,
@@ -46,7 +46,7 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
           ),
           color:
               Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.blueBlak
+                  ? AppColors.black
                   : Colors.white,
         ),
         child: Column(
@@ -118,7 +118,7 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
               decoration: const BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: AppColors.blueLight, // Color de la línea
+                    color: AppColors.primario, // Color de la línea
                     width: 1.0, // Grosor de la línea
                   ),
                 ),
@@ -144,7 +144,7 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
                                   bottomRight: Radius.circular(0),
                                 ),
                               ),
-                              backgroundColor: AppColors.green,
+                              backgroundColor: AppColors.primario,
                             ),
                             child: const Text(
                               'Cancelar',
@@ -198,7 +198,7 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
                                   bottomRight: Radius.circular(24),
                                 ),
                               ),
-                              backgroundColor: AppColors.greenDark,
+                              backgroundColor: AppColors.primario,
                             ),
                             child: const Text(
                               'Aceptar',
@@ -300,12 +300,12 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
                     ),
                     selected: activo,
                     checkmarkColor: Colors.white, // Color del ícono de check
-                    selectedColor: AppColors.greenDark,
+                    selectedColor: AppColors.secundario,
                     backgroundColor: Colors.grey[300],
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                       side: BorderSide(
-                        color: activo ? AppColors.green : Colors.grey[400]!,
+                        color: activo ? AppColors.primario : Colors.grey[400]!,
                       ),
                     ),
 
@@ -321,7 +321,7 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
               frecuencia == 'Semanal'
                   ? "Permanencia mínima: 4 servicios o 1 mes."
                   : "Permanencia mínima: 2 servicios o 1 mes.",
-              style: const TextStyle(color: AppColors.greenDark, fontSize: 13),
+              style: const TextStyle(color: AppColors.secundario, fontSize: 13),
             ),
           ),
       ],
@@ -336,7 +336,7 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
         checkboxTheme: CheckboxThemeData(
           fillColor: WidgetStateProperty.resolveWith<Color>((states) {
             if (states.contains(WidgetState.selected)) {
-              return AppColors.green; // color del check activo
+              return AppColors.primario; // color del check activo
             }
             return Colors.grey; // color del borde inactivo
           }),
@@ -423,8 +423,8 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              thumbColor: AppColors.green,
-              activeTrackColor: AppColors.green,
+              thumbColor: AppColors.primario,
+              activeTrackColor: AppColors.primario,
               inactiveTrackColor: Colors.grey[300],
               overlayColor: const Color.fromARGB(181, 7, 200, 248),
               trackHeight: 10,
@@ -545,7 +545,7 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
                 fondo = Colors.red[100]!;
                 texto = Colors.red;
               } else if (esSeleccionada) {
-                fondo = AppColors.green; // Fondo resaltado
+                fondo = AppColors.primario; // Fondo resaltado
                 texto = Colors.white;
               } else {
                 fondo = Colors.grey[300]!;
@@ -573,7 +573,9 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color:
-                          esSeleccionada ? AppColors.green : Colors.transparent,
+                          esSeleccionada
+                              ? AppColors.primario
+                              : Colors.transparent,
                       width: 2,
                     ),
                   ),
@@ -630,9 +632,9 @@ class _FrecuenciaServicioState extends State<FrecuenciaServicio> {
   }) {
     return SliderTheme(
       data: SliderTheme.of(context).copyWith(
-        thumbColor: AppColors.green,
+        thumbColor: AppColors.primario,
         // color interno del círculo
-        activeTrackColor: AppColors.green, // color barra seleccionada
+        activeTrackColor: AppColors.primario, // color barra seleccionada
         inactiveTrackColor: Colors.grey[300], // barra no seleccionada
         overlayColor: const Color.fromARGB(
           181,

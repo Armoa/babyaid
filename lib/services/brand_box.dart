@@ -28,7 +28,7 @@ class _BrandBoxState extends State<BrandBox> {
                 width: double.infinity,
                 color:
                     Theme.of(context).brightness == Brightness.dark
-                        ? AppColors.blueBlak
+                        ? AppColors.black
                         : Colors.white,
                 child: CarouselSlider.builder(
                   itemCount: featured.data!.length,

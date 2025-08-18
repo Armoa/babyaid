@@ -1,4 +1,3 @@
-import 'package:bebito/model/colors.dart';
 import 'package:bebito/model/personal_model.dart';
 import 'package:flutter/material.dart';
 
@@ -57,7 +56,7 @@ class ComentarioScreen extends StatelessWidget {
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
                   ),
-                  color: AppColors.white,
+                  color: Colors.white,
                 ),
                 child: ListView.builder(
                   padding: const EdgeInsets.all(16),

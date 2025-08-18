@@ -225,7 +225,7 @@ class _SelectorUbicacionState extends State<SelectorUbicacion> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(
         toolbarHeight: 100,
         automaticallyImplyLeading: false,
@@ -241,7 +241,7 @@ class _SelectorUbicacionState extends State<SelectorUbicacion> {
           ),
           color:
               Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.blueBlak
+                  ? AppColors.black
                   : Colors.white,
         ),
         child: Padding(
@@ -268,7 +268,7 @@ class _SelectorUbicacionState extends State<SelectorUbicacion> {
                   Expanded(
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.greenDark,
+                        backgroundColor: AppColors.primario,
                         padding: const EdgeInsets.all(16),
                       ),
                       onPressed: () {
@@ -286,11 +286,11 @@ class _SelectorUbicacionState extends State<SelectorUbicacion> {
                       icon: const Icon(
                         Iconsax.add_circle_copy,
                         size: 28,
-                        color: AppColors.white,
+                        color: Colors.white,
                       ),
                       label: const Text(
                         'Agregar ubicación',
-                        style: TextStyle(color: AppColors.white, fontSize: 18),
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
                   ),

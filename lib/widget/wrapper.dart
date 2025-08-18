@@ -1,5 +1,5 @@
 import 'package:bebito/provider/auth_provider.dart';
-import 'package:bebito/screens/home.dart';
+import 'package:bebito/screens/home_screen.dart';
 import 'package:bebito/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,9 +18,9 @@ class Wrapper extends StatelessWidget {
 
     // Basado en el estado de isLogged, decide qué pantalla mostrar
     if (authProvider.isLogged) {
-      return const MyHomePage(); // Si está logueado, ve a la página principal
+      return const HomeScreen();
     } else {
-      return LoginScreen(); // Si no, quédate en la pantalla de login
+      return LoginScreen();
     }
   }
 }

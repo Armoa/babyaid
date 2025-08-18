@@ -30,7 +30,7 @@ class _MyOrdersState extends State<MyOrders> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blueLight,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(title: const Text("Mis pedidos")),
       body: Container(
         decoration: const BoxDecoration(

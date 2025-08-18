@@ -147,7 +147,7 @@ class _MisServiciosState extends State<MisServicios> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(toolbarHeight: 100, title: TitleAppbar()),
       body: Container(
         decoration: const BoxDecoration(
@@ -221,12 +221,12 @@ class _MisServiciosState extends State<MisServicios> {
                                     }
                                   },
                                   checkmarkColor: Colors.white,
-                                  selectedColor: AppColors.greenDark,
+                                  selectedColor: AppColors.primario,
                                   labelStyle: TextStyle(
                                     color:
                                         _selectedStatus == statusKey
                                             ? Colors.white
-                                            : AppColors.greenDark,
+                                            : AppColors.primario,
                                   ),
                                 ),
                               );
@@ -589,7 +589,7 @@ Future<bool> _mostrarCampoComentario(
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    backgroundColor: AppColors.white,
+    backgroundColor: Colors.white,
     builder: (BuildContext bc) {
       return Padding(
         padding: EdgeInsets.only(
@@ -646,7 +646,7 @@ Future<bool> _mostrarCampoComentario(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           elevation: 0,
-                          backgroundColor: AppColors.green,
+                          backgroundColor: AppColors.primario,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                             side: BorderSide.none,
@@ -747,7 +747,7 @@ void mostrarPopupCalificacion(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    backgroundColor: AppColors.white,
+    backgroundColor: Colors.white,
 
     builder: (BuildContext bc) {
       // Usamos StatefulBuilder para manejar el estado interno del bottom sheet
@@ -861,19 +861,19 @@ void mostrarPopupCalificacion(
                                     style: TextStyle(
                                       color:
                                           isSelected
-                                              ? AppColors.greenStandar
-                                              : AppColors.grayDark,
+                                              ? AppColors.primario
+                                              : AppColors.secundario,
                                     ),
                                   ),
                                   backgroundColor:
                                       isSelected
-                                          ? AppColors.greenLight
+                                          ? AppColors.secundario
                                           : Colors.grey[100],
                                   side: BorderSide(
                                     width: 2,
                                     color:
                                         isSelected
-                                            ? AppColors.greenStandar
+                                            ? AppColors.primario
                                             : Colors.transparent,
                                   ),
                                   onPressed: () {
@@ -897,30 +897,28 @@ void mostrarPopupCalificacion(
                                       size: 18,
                                       color:
                                           _comentarioCargado
-                                              ? AppColors.greenStandar
+                                              ? AppColors.primario
                                               : AppColors
-                                                  .grayDark, // Color del icono
+                                                  .secundario, // Color del icono
                                     ),
                                     label: Text(
                                       'Deja un comentario',
                                       style: TextStyle(
                                         color:
                                             _comentarioCargado
-                                                ? AppColors.greenStandar
-                                                : AppColors
-                                                    .grayDark, // Color del texto
+                                                ? AppColors.primario
+                                                : AppColors.secundario,
                                       ),
                                     ),
                                     backgroundColor:
                                         _comentarioCargado
-                                            ? AppColors.greenLight
-                                            : AppColors
-                                                .grayLight, // Color de fondo
+                                            ? AppColors.primario
+                                            : AppColors.secundario,
                                     side: BorderSide(
                                       width: 2,
                                       color:
                                           _comentarioCargado
-                                              ? AppColors.greenStandar
+                                              ? AppColors.primario
                                               : Colors
                                                   .transparent, // Color del borde
                                     ),
@@ -953,7 +951,7 @@ void mostrarPopupCalificacion(
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 elevation: 0,
-                                backgroundColor: AppColors.green,
+                                backgroundColor: AppColors.primario,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   side: BorderSide.none,

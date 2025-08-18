@@ -211,7 +211,7 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.greenDark,
+                          backgroundColor: AppColors.secundario,
                         ),
                         onPressed: () {
                           if (ciudadSeleccionada != null &&
@@ -246,7 +246,7 @@ class AddAddressScreenState extends State<AddAddressScreen> {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.green,
+                          backgroundColor: AppColors.primario,
                         ),
                         onPressed: () async {
                           if (_validarCampos()) {

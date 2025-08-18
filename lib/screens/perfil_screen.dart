@@ -106,7 +106,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     // Ahora usa los datos directamente del objeto 'user'
     var subTitle = const TextStyle(fontSize: 14, fontWeight: FontWeight.w600);
     return Scaffold(
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(title: const Text("Mi perfil")),
       body: Container(
         decoration: const BoxDecoration(
@@ -158,7 +158,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                       ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor: WidgetStateProperty.all<Color>(
-                            AppColors.green,
+                            AppColors.primario,
                           ),
                           foregroundColor: WidgetStateProperty.all<Color>(
                             Colors.white,
@@ -296,7 +296,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                       Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.green,
+                            backgroundColor: AppColors.primario,
                           ),
                           onPressed: () {
                             Navigator.push(

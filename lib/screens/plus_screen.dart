@@ -7,7 +7,7 @@ class PlusScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.green,
+      backgroundColor: AppColors.primario,
       appBar: AppBar(
         toolbarHeight: 120,
         automaticallyImplyLeading: false,
@@ -50,7 +50,7 @@ class PlusScreen extends StatelessWidget {
           ),
           color:
               Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.blueBlak
+                  ? AppColors.black
                   : Colors.white,
         ),
         child: Expanded(
